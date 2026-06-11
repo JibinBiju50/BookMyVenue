@@ -6,63 +6,17 @@
 
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const Venue = require("../models/Venue");
 
 dotenv.config();
 
-// ── Inline Venue schema (avoids path issues when running seeder standalone) ──
-const venueSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true },
-    description: { type: String, trim: true },
-    type: {
-      type: String,
-      enum: [
-        "banquet_hall","auditorium","convention_center","outdoor",
-        "rooftop","resort","hotel_ballroom","community_hall",
-        "wedding_hall","conference_room",
-      ],
-      required: true,
-    },
-    district: { type: String, required: true, trim: true },
-    town: { type: String, required: true, trim: true },
-    address: { type: String, required: true, trim: true },
-    location: {
-      type: { type: String, enum: ["Point"], default: "Point" },
-      coordinates: { type: [Number], required: true }, // [lng, lat]
-    },
-    capacity: {
-      min: { type: Number, default: 0 },
-      max: { type: Number, required: true },
-    },
-    pricing: {
-      basePrice: { type: Number, required: true },
-      currency: { type: String, default: "INR" },
-      pricingModel: { type: String, enum: ["per_day","per_hour","per_event"], default: "per_day" },
-    },
-    amenities: { type: [String], default: [] },
-    images: { type: [String], default: [] },
-    contactInfo: { phone: String, email: String, website: String },
-    isActive: { type: Boolean, default: true },
-    rating: {
-      average: { type: Number, default: 0, min: 0, max: 5 },
-      count: { type: Number, default: 0 },
-    },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
-  },
-  { timestamps: true }
-);
-venueSchema.index({ location: "2dsphere" });
-
-const Venue = mongoose.models.Venue || mongoose.model("Venue", venueSchema);
-
-// ── Seed Data ──────────────────────────────────────────────────────────────
 const venues = [
   // ── Thiruvananthapuram ────────────────────────────────────────────────────
   {
     name: "Leela Convention Centre",
     description:
       "A stunning beachfront convention hall with panoramic views of the Arabian Sea, perfect for grand weddings and corporate events.",
-    type: "convention_center",
+    category: "convention_center",
     district: "Thiruvananthapuram",
     town: "Kovalam",
     address: "Beach Road,The Leela, Kovalam, Thiruvananthapuram, Kerala 695527",
@@ -75,13 +29,15 @@ const venues = [
       "https://www.google.com/imgres?q=leela%20convention%20centre%20kovalam&imgurl=https%3A%2F%2Fwww.theleela.com%2Fprod%2Fcontent%2Fassets%2Faio-banner%2Fdekstop%2FCelebrations_1920x950_7.webp&imgrefurl=https%3A%2F%2Fwww.theleela.com%2Fthe-leela-kovalam-a-raviz-hotel%2Fcelebrations&docid=yCoDh1u8Ce2Y_M&tbnid=EHR_uEd8XAl1uM&vet=12ahUKEwjFlo7ujvWUAxUrxzgGHe8RGEMQnPAOegQIIhAB..i&w=1920&h=950&hcb=2&ved=2ahUKEwjFlo7ujvWUAxUrxzgGHe8RGEMQnPAOegQIIhAB",
     ],
     contactInfo: { phone: "18001031444", email: "NIL" },
-    rating: { average: 4.5, count: 38 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
   {
     name: "Bishop Pereira Hall",
     description:
       "A lush green property with an elegant indoor banquet hall and an open-air lawn, ideal for all types of celebrations.",
-    type: "banquet_hall",
+    category: "banquet_hall",
     district: "Thiruvananthapuram",
     town: "palayam",
     address: "Road, near Police Camp, University of Kerala Senate House Campus, Nandavanam, Palayam, Thiruvananthapuram, Kerala 695033",
@@ -94,7 +50,9 @@ const venues = [
       "https://image.wedmegood.com/resized/450X/uploads/member/700485/1568098747_Screenshot_from_2019_09_10_11_37_39.png",
     ],
     contactInfo: { phone: "07511107755", email: "info@bishopperira.com" },
-    rating: { average: 4, count: 61 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Ernakulam (Kochi) ─────────────────────────────────────────────────────
@@ -102,7 +60,7 @@ const venues = [
     name: "Le Meridien Grand Ballroom",
     description:
       "Kochi's premier luxury ballroom, equipped with state-of-the-art AV systems and world-class catering. A favourite for elite weddings and conferences.",
-    type: "hotel_ballroom",
+    category: "hotel_ballroom",
     district: "Ernakulam",
     town: "Kochi",
     address: "Maradu, Kochi, Ernakulam, Kerala 682304",
@@ -115,15 +73,17 @@ const venues = [
       "https://images.unsplash.com/photo-1478146059778-26028b07395a?w=800",
     ],
     contactInfo: { phone: "+91 484 2885000", email: "events@lemeridien-kochi.com", website: "https://www.marriott.com" },
-    rating: { average: 4.8, count: 112 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
   {
     name: "Anugraha Auditorium, St. Francis Xavier Parish Annexe",
     description:
       "A heritage auditorium in the heart of Kaloor with excellent acoustics, ideal for cultural programmes, conferences, and seminars.",
-    type: "auditorium",
+    category: "auditorium",
     district: "Ernakulam",
-    town: "KOchi",
+    town: "Kochi",
     address: "St Francis Xaviers Church Rd, Kathrikadavu, Kaloor, Ernakulam, Kerala 682017",
     location: { type: "Point", coordinates: [9.986079072694052, 76.29364571528832] },
     capacity: { min: 100, max: 600 },
@@ -134,7 +94,9 @@ const venues = [
       "https://weddingz.in/kochi/anugraha-auditorium-kaloor/",
     ],
     contactInfo: { phone: "+91 484 2353535", email: "booking@ernakulamtownhall.in" },
-    rating: { average: 4.0, count: 45 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Thrissur ──────────────────────────────────────────────────────────────
@@ -142,7 +104,7 @@ const venues = [
     name: "Wedding Village",
     description:
       "A sprawling outdoor wedding garden adjacent to a heritage palace, featuring manicured lawns and a traditional mandapam.",
-    type: "outdoor",
+    category: "outdoor",
     district: "Thrissur",
     town: "Thrissur",
     address: "Civil Lines Rd, Thrissur, Kerala 680003",
@@ -155,13 +117,15 @@ const venues = [
       "https://image.wedmegood.com/resized/720X/uploads/member/25870705/1753862417_Screenshot_39.jpg",
     ],
     contactInfo: { phone: "08589063888", email: "NIL" },
-    rating: { average: 4.3, count: 74 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
   {
-    name: "Thiruvambady Convention centre",
+    name: "Thiruvambady Convention Centre",
     description:
       "A modern multi-purpose convention centre in Thrissur with modular halls for events ranging from intimate gatherings to large conferences.",
-    type: "convention_center",
+    category: "convention_center",
     district: "Thrissur",
     town: "Thekkinkadu",
     address: "Marar Road Area, Thekkinkadu Maidan, Thrissur, Kerala 680001",
@@ -174,7 +138,9 @@ const venues = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRm304Q_N48r73A2Ic2xa11yDtrCdxW4S6nEw&s",
     ],
     contactInfo: { phone: "04872972442", email: "NIL" },
-    rating: { average: 4.1, count: 52 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Kozhikode (Calicut) ───────────────────────────────────────────────────
@@ -182,7 +148,7 @@ const venues = [
     name: "Sree Narayana Centenary Hall",
     description:
       "A grand wedding hall blending Malabar heritage architecture with modern amenities, offering breathtaking interiors for memorable celebrations.",
-    type: "wedding_hall",
+    category: "wedding_hall",
     district: "Kozhikode",
     town: "Kozhikode",
     address: "380, SK Temple Rd, Tazhekkod, Kozhikode, Kerala 673001",
@@ -195,13 +161,15 @@ const venues = [
       "https://images.unsplash.com/photo-1568695271936-bd98f9b3b0c5?w=800",
     ],
     contactInfo: { phone: "04952722681", email: "events@calicutheritagehall.com" },
-    rating: { average: 4.6, count: 83 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
   {
     name: "Majestic Auditorium",
     description:
-      "Turn your special moments into grand celebrations at our elegant",
-    type: "auditorium",
+      "Turn your special moments into grand celebrations at our elegant auditorium.",
+    category: "auditorium",
     district: "Kozhikode",
     town: "Palayam",
     address: "Chinthavalappu Flats, Palayam, Kozhikode, Kerala 673002",
@@ -214,17 +182,17 @@ const venues = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDCSXtm7JmJUTQ26hlKkaySMqhlt8oo3v-sA&s",
     ],
     contactInfo: { phone: "09497392200", email: "majestic@beachlounge.in" },
-    rating: { average: 4.4, count: 29 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
-
- 
 
   // ── Kollam ────────────────────────────────────────────────────────────────
   {
     name: "Samiira on Ashtamudi Lake",
     description:
       "A serene backwater resort banquet hall perched beside Ashtamudi Lake, renowned for its Kerala-style cuisine and tranquil ambiance.",
-    type: "resort",
+    category: "resort",
     district: "Kollam",
     town: "Kollam",
     address: "Sarayu Nagar, Asramam, Kollam, Kerala 691002",
@@ -237,7 +205,9 @@ const venues = [
       "https://www.instagram.com/samiiraquilon/p/DOsIDbmj7Dj/",
     ],
     contactInfo: { phone: "04742950507", email: "stay@ashtamudilakeresort.com" },
-    rating: { average: 4.7, count: 57 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Alappuzha (Alleppey) ──────────────────────────────────────────────────
@@ -245,7 +215,7 @@ const venues = [
     name: "Punnamada Resort",
     description:
       "An enchanting houseboat-style pavilion on the backwaters of Alappuzha, offering a one-of-a-kind floating venue experience.",
-    type: "resort",
+    category: "resort",
     district: "Alappuzha",
     town: "Alleppey",
     address: "Punnamada, Kottankulangara, Alappuzha, Kerala 688006",
@@ -258,15 +228,17 @@ const venues = [
       "https://www.keralatourism.org/images/service-providers/photos/property-2670-profile-8269-20180726062519.jpg",
     ],
     contactInfo: { phone: "09446433692", email: "bookings@alleppey.com" },
-    rating: { average: 4.9, count: 93 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Kottayam ──────────────────────────────────────────────────────────────
   {
-    name: "Ktdc waterscapes auditorium",
+    name: "KTDC Waterscapes Auditorium",
     description:
       "A lakeside banquet hall set in the heart of Kumarakom bird sanctuary area, combining luxury and nature seamlessly.",
-    type: "banquet_hall",
+    category: "banquet_hall",
     district: "Kottayam",
     town: "Kumarakom",
     address: "Backwater Resort, KTDC, North, Kumarakom, Kerala 686563",
@@ -279,15 +251,17 @@ const venues = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv8Ygj5cExcmWprCIZNGxYtgKBIoyXGGd0Gg&s",
     ],
     contactInfo: { phone: "04812525861", email: "events@kumarakomluxury.com" },
-    rating: { average: 4.8, count: 66 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Kannur ────────────────────────────────────────────────────────────────
   {
     name: "Exora Conventions",
     description:
-      "A large-scale community convention centre in Kannur, .",
-    type: "convention_center",
+      "A large-scale community convention centre in Kannur, well-suited for summits, cultural programmes, and exhibitions.",
+    category: "convention_center",
     district: "Kannur",
     town: "Kannur",
     address: "Near Govt. Talap Mixed UP School, Talap, Kannur, Kerala 670002",
@@ -300,7 +274,9 @@ const venues = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPOH1CFpS9tJb-2ez1lIrBHUKOP5PKVnt7Cg&s",
     ],
     contactInfo: { phone: "09895024644", email: "convention@kannur.com" },
-    rating: { average: 3.9, count: 34 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 
   // ── Idukki ────────────────────────────────────────────────────────────────
@@ -308,7 +284,7 @@ const venues = [
     name: "Munnar Hills Conference Resort",
     description:
       "A premium hill-station conference resort in Munnar with cool climate, panoramic tea-estate views, and modern meeting rooms.",
-    type: "resort",
+    category: "resort",
     district: "Idukki",
     town: "Munnar",
     address: "P.B.No 3, Thattathi Muku Chithirapuram P. O, Kerala 685565",
@@ -321,7 +297,9 @@ const venues = [
       "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
     ],
     contactInfo: { phone: "08714814775", email: "bookings@munnarresort.com", website: "http://www.munnarteahills.com" },
-    rating: { average: 4.7, count: 101 },
+    status: "approved",
+    isActive: true,
+    isSeed: true,
   },
 ];
 
@@ -333,10 +311,12 @@ async function seedVenues() {
   await mongoose.connect(uri);
   console.log("✅  Connected");
 
-  console.log("🗑   Clearing existing venues …");
-  await Venue.deleteMany({});
+  // Delete ONLY seed venues — real owner-submitted venues are untouched
+  console.log("🗑   Removing existing seed venues (isSeed: true) …");
+  const deleted = await Venue.deleteMany({ isSeed: true });
+  console.log(`    Removed ${deleted.deletedCount} seed venue(s)`);
 
-  console.log(`🌱  Inserting ${venues.length} Kerala venues …`);
+  console.log(`🌱  Inserting ${venues.length} Kerala seed venues …`);
   const inserted = await Venue.insertMany(venues);
   console.log(`✅  Inserted ${inserted.length} venues successfully`);
 
