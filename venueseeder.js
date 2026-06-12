@@ -1,12 +1,12 @@
 /**
  * Kerala Venue Seed Data
- * 15 sample venues across major districts of Kerala
- * Run: node backend/seeders/venueSeeder.js
+ * 13 sample venues across major districts of Kerala
+ * Run: node src/seeders/venueSeeder.js
  */
 
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const Venue = require("../models/Venue");
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import Venue from "../models/Venue.js";
 
 dotenv.config();
 
@@ -305,7 +305,7 @@ const venues = [
 
 // ── Seeder runner ──────────────────────────────────────────────────────────
 async function seedVenues() {
-  const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/bookmyvenue";
+  const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/bookmyvenue";
 
   console.log("🔌  Connecting to MongoDB …");
   await mongoose.connect(uri);

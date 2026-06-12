@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const venueSchema = new mongoose.Schema(
   {
@@ -13,7 +13,8 @@ const venueSchema = new mongoose.Schema(
       trim: true,
     },
 
-    type: {
+    // renamed from "type" to "category" for consistency across schema, API, frontend
+    category: {
       type: String,
       enum: [
         "banquet_hall",
@@ -27,7 +28,7 @@ const venueSchema = new mongoose.Schema(
         "wedding_hall",
         "conference_room",
       ],
-      required: [true, "Venue type is required"],
+      required: [true, "Venue category is required"],
     },
 
     district: {
@@ -55,7 +56,7 @@ const venueSchema = new mongoose.Schema(
         default: "Point",
       },
       coordinates: {
-        // [longitude, latitude]
+        // [longitude, latitude] — GeoJSON standard
         type: [Number],
         required: [true, "Coordinates are required"],
       },
@@ -85,11 +86,10 @@ const venueSchema = new mongoose.Schema(
     amenities: {
       type: [String],
       default: [],
-      // e.g. ["AC", "Parking", "Catering", "Projector", "WiFi", "Stage", "Dressing Room"]
     },
 
     images: {
-      type: [String], // Array of image URLs
+      type: [String],
       default: [],
     },
 
@@ -99,20 +99,31 @@ const venueSchema = new mongoose.Schema(
       website: String,
     },
 
+    // seed venues → "approved" (visible in listings immediately)
+    // owner-submitted venues → "pending" by default (Week 2 admin review)
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
     isActive: {
       type: Boolean,
       default: true,
     },
 
-    rating: {
-      average: { type: Number, default: 0, min: 0, max: 5 },
-      count: { type: Number, default: 0 },
+    // marks sample/seed venues so seeder never deletes real owner data
+    isSeed: {
+      type: Boolean,
+      default: false,
     },
+
+    // rating removed — reviews are out of scope for Phase 1 MVP
 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null, // will be linked once owner auth is added
+      default: null,
     },
   },
   {
@@ -120,12 +131,12 @@ const venueSchema = new mongoose.Schema(
   }
 );
 
-// Geo index for proximity searches ($near queries)
+// Geo index — powers "Use Current Location" $near queries
 venueSchema.index({ location: "2dsphere" });
 
-// Text index for search by name / town / district
+// Text index — powers keyword search by name / town / district
 venueSchema.index({ name: "text", town: "text", district: "text" });
 
 const Venue = mongoose.model("Venue", venueSchema);
 
-module.exports = Venue;
+export default Venue;
