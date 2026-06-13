@@ -5,18 +5,37 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import Unauthorized from "./pages/Unauthorized";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Routes>
-      <Route path="/register" element={<Register />} />
+      {/* Public Routes */}
+      <Route path="/" element={<Register />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Home />} />
-     
+      <Route path="/home" element={<Home />} />
+      <Route path="/unauthorized" element={<Unauthorized />} />
 
-      {/* DASHBOARDS */}
-      <Route path="/owner-dashboard" element={<OwnerDashboard />} />
-      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      {/* Owner Route */}
+      <Route
+  path="/owner/dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["owner"]}>
+      <OwnerDashboard />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/dashboard"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <AdminDashboard />
+    </ProtectedRoute>
+  }
+/>
     </Routes>
   );
 }
