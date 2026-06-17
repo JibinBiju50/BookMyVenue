@@ -4,27 +4,67 @@ function Home() {
   return (
     <div className="min-h-screen bg-[#faf7f5]">
       {/* Navbar */}
-   <nav className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
-  {/* Logo + Name */}
-  <div className="flex items-center gap-3">
+<nav className="bg-white px-100 py-6 shadow-sm">
+  <div className="flex justify-center items-center gap-3">
     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-[#4a1625] flex items-center justify-center">
       <MapPin size={24} className="text-white" />
     </div>
-
     <h1 className="text-2xl font-bold text-gray-900">
       BookMy<span className="text-[#8b1e2d]">Venue</span>
     </h1>
   </div>
+  <div>
+    <Link
+    to="/login"
+    className="absolute right-3 -translate-y-1/2 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+  
+    Login
+  </Link>
+   <Link
+  to="/GetHelp"
+  className="absolute right-18  -translate-y-1/2 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
 
-  {/* Menu */}
-  <button className="text-3xl">☰</button>
+  Get Help
+</Link>
+  <Link
+    to="/RegisterMyVenue"
+    className="absolute left-3 -translate-y-4/5 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+  
+    RegisterMyVenue
+  </Link>
+  </div>
+  <div>
+    <Link
+    to="/login"
+    className="absolute right-100 -translate-y-10 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+  
+  Contact Us
+  </Link>
+   <Link
+  to="/GetHelp"
+  className="absolute right-150  -translate-y-10 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+
+  Category
+</Link>
+  <Link
+    to="/RegisterMyVenue"
+    className="absolute left-100 -translate-y-10 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+  
+    Venue
+  </Link>
+   <Link
+    to="/RegisterMyVenue"
+    className="absolute left-150 -translate-y-10 text-[#8b1e2d] font-semibold hover:text-black transition-colors">
+  
+  Feature
+  </Link>
+  </div>
 </nav>
-
+  
+       
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="inline-block px-4 py-2 rounded-full bg-white border text-gray-600 text-sm">
-          ✨ Discover the perfect venue
-        </div>
+        
 
         <h1 className="mt-6 text-5xl md:text-7xl font-serif leading-tight">
           Find the{" "}
@@ -40,16 +80,7 @@ function Home() {
           wedding venues, outdoor spaces and more.
         </p>
 
-        {/* Buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <button className="px-8 py-4 rounded-2xl text-white font-semibold bg-gradient-to-r from-red-600 to-[#4a1625]">
-            🔍 Browse Venues
-          </button>
-
-          <button className="px-8 py-4 rounded-2xl bg-white border font-semibold">
-            List Your Venue
-          </button>
-        </div>
+        
 
         {/* Search Card */}
         <div className="mt-12 bg-white rounded-3xl shadow-md p-6">
@@ -99,17 +130,17 @@ function Home() {
         {/* Stats */}
         <div className="mt-10 flex gap-12">
           <div>
-            <h2 className="text-3xl font-bold">2.4k+</h2>
+            <h2 className="text-2xl ">2.4k+</h2>
             <p className="text-gray-500">Venues Listed</p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold">180+</h2>
+            <h2 className="text-2xl ">180+</h2>
             <p className="text-gray-500">Cities</p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold">50k+</h2>
+            <h2 className="text-2xl ">50k+</h2>
             <p className="text-gray-500">Bookings</p>
           </div>
         </div>
