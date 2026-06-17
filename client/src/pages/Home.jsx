@@ -4,27 +4,80 @@ function Home() {
   return (
     <div className="min-h-screen bg-[#faf7f5]">
       {/* Navbar */}
-   <nav className="bg-white px-6 py-4 flex justify-between items-center shadow-sm">
-  {/* Logo + Name */}
-  <div className="flex items-center gap-3">
-    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-[#4a1625] flex items-center justify-center">
-      <MapPin size={24} className="text-white" />
+   <nav className="bg-white px-6 py-4 shadow-sm">
+  <div className="flex items-center justify-between w-full">
+
+  {/* Left */}
+  <Link
+    to="#"
+    className="text-[#8b1e2d] font-semibold hover:text-black transition-colors "
+  >
+    RegisterMyVenue
+  </Link>
+
+  {/* Center */}
+  <div className="flex items-center gap-6">
+    <Link
+      to="/features"
+      className="text-[#8b1e2d] hover:text-black transition-colors"
+    >
+      Venue
+    </Link>
+    <Link
+      to="/features"
+      className="text-[#8b1e2d] hover:text-black transition-colors"
+    >
+      Contact Us
+    </Link>
+
+    <div className="flex items-center gap-3">
+      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-[#4a1625] flex items-center justify-center">
+        <MapPin size={24} className="text-white" />
+      </div>
+
+      <h1 className="text-2xl font-bold text-gray-900">
+        BookMy<span className="text-[#8b1e2d]">Venue</span>
+      </h1>
     </div>
 
-    <h1 className="text-2xl font-bold text-gray-900">
-      BookMy<span className="text-[#8b1e2d]">Venue</span>
-    </h1>
+    <Link
+      to="/features"
+      className="text-[#8b1e2d] hover:text-black font-medium"
+    >
+      Features
+    </Link>
+
+    <Link
+      to="/contact"
+      className="text-[#8b1e2d] hover:text-black font-medium"
+    >
+      Contact Us
+    </Link>
   </div>
 
-  {/* Menu */}
-  <button className="text-3xl">☰</button>
-</nav>
+  {/* Right */}
+  <div className="flex items-center gap-4">
+    <Link
+      to="/help"
+      className="text-[#8b1e2d] font-semibold hover:text-black transition-colors"
+    >
+      Get Help
+    </Link>
+
+    <Link
+      to="/login"
+      className="text-[#8b1e2d] font-semibold hover:text-black transition-colors"
+    >
+      Login
+    </Link>
+  </div>
+
+</div>
+</nav> 
 
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="inline-block px-4 py-2 rounded-full bg-white border text-gray-600 text-sm">
-          ✨ Discover the perfect venue
-        </div>
+        
 
         <h1 className="mt-6 text-5xl md:text-7xl font-serif leading-tight">
           Find the{" "}
@@ -99,17 +152,17 @@ function Home() {
         {/* Stats */}
         <div className="mt-10 flex gap-12">
           <div>
-            <h2 className="text-3xl font-bold">2.4k+</h2>
+            <h2 className="text-3xl ">2.4k+</h2>
             <p className="text-gray-500">Venues Listed</p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold">180+</h2>
+            <h2 className="text-3xl">180+</h2>
             <p className="text-gray-500">Cities</p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-bold">50k+</h2>
+            <h2 className="text-3xl ">50k+</h2>
             <p className="text-gray-500">Bookings</p>
           </div>
         </div>
