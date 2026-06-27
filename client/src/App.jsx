@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Unauthorized from "./pages/Unauthorized";
+import Venues from "./pages/Venues";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -17,6 +18,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/home" element={<Home />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/venues" element={<Venues />} />
 
       {/* Owner Route */}
       <Route
