@@ -28,7 +28,10 @@ const venues = [
       "https://www.theleela.com/the-leela-kovalam-a-raviz-hotel",
       "https://www.google.com/imgres?q=leela%20convention%20centre%20kovalam&imgurl=https%3A%2F%2Fwww.theleela.com%2Fprod%2Fcontent%2Fassets%2Faio-banner%2Fdekstop%2FCelebrations_1920x950_7.webp&imgrefurl=https%3A%2F%2Fwww.theleela.com%2Fthe-leela-kovalam-a-raviz-hotel%2Fcelebrations&docid=yCoDh1u8Ce2Y_M&tbnid=EHR_uEd8XAl1uM&vet=12ahUKEwjFlo7ujvWUAxUrxzgGHe8RGEMQnPAOegQIIhAB..i&w=1920&h=950&hcb=2&ved=2ahUKEwjFlo7ujvWUAxUrxzgGHe8RGEMQnPAOegQIIhAB",
     ],
-    contactInfo: { phone: "18001031444", email: "NIL" },
+    contactInfo: {
+      phone: "18001031444",
+      email: null,
+    },
     status: "approved",
     isActive: true,
     isSeed: true,
@@ -45,9 +48,13 @@ const venues = [
     capacity: { min: 50, max: 500 },
     pricing: { basePrice: 40000, currency: "INR", pricingModel: "per_day" },
     amenities: ["AC", "Parking", "Catering", "Stage", "Lawn", "Valet", "Generator", "Sound System"],
+    thumbnailImage:
+      "https://res.cloudinary.com/your-cloud-name/image/upload/v123/bookmyvenue/leela-thumb.jpg",
+
     images: [
-      "https://www.google.com/imgres?q=bishop%20pereira%20hall%20palayam&imgurl=https%3A%2F%2Fimage.wedmegood.com%2Fresized%2F800X%2Fuploads%2Fmember%2F700485%2F1568098742_Screenshot_from_2019_09_10_12_08_48.png&imgrefurl=https%3A%2F%2Fwww.wedmegood.com%2Fwedding-venues%2FBishop-Pereira-Hall-700485%3Fsrsltid%3DAfmBOoqYcSgASDP9HgI2o4gdqJCHAQYTixz2zfySwz_Kj602ps8yBwWd&docid=axuZBVNnWo_69M&tbnid=ESFNbqcYCVzzCM&vet=12ahUKEwiPutHYkPWUAxUTXGwGHflLGX8QnPAOegQIHBAB..i&w=800&h=482&hcb=2&ved=2ahUKEwiPutHYkPWUAxUTXGwGHflLGX8QnPAOegQIHBAB",
-      "https://image.wedmegood.com/resized/450X/uploads/member/700485/1568098747_Screenshot_from_2019_09_10_11_37_39.png",
+      "https://res.cloudinary.com/your-cloud-name/image/upload/v123/bookmyvenue/leela-1.jpg",
+      "https://res.cloudinary.com/your-cloud-name/image/upload/v123/bookmyvenue/leela-2.jpg",
+      "https://res.cloudinary.com/your-cloud-name/image/upload/v123/bookmyvenue/leela-3.jpg",
     ],
     contactInfo: { phone: "07511107755", email: "info@bishopperira.com" },
     status: "approved",

@@ -56,21 +56,35 @@ const venueSchema = new mongoose.Schema(
         default: "Point",
       },
       coordinates: {
-        // [longitude, latitude] — GeoJSON standard
         type: [Number],
         required: [true, "Coordinates are required"],
+        validate: {
+          validator: function (value) {
+            return value.length === 2;
+          },
+          message: "Coordinates must contain longitude and latitude",
+        },
       },
     },
 
     capacity: {
-      min: { type: Number, default: 0 },
-      max: { type: Number, required: [true, "Maximum capacity is required"] },
+      min: {
+        type: Number,
+        default: 0,
+        min: [0, "Minimum capacity cannot be negative"],
+      },
+      max: {
+        type: Number,
+        required: [true, "Maximum capacity is required"],
+        min: [1, "Maximum capacity must be at least 1"],
+      },
     },
 
     pricing: {
       basePrice: {
         type: Number,
         required: [true, "Base price is required"],
+        min: [0, "Base price cannot be negative"],
       },
       currency: {
         type: String,
@@ -78,7 +92,7 @@ const venueSchema = new mongoose.Schema(
       },
       pricingModel: {
         type: String,
-        enum: ["per_day", "per_hour", "per_event"],
+        enum: ["per_day", "per_event"],
         default: "per_day",
       },
     },
