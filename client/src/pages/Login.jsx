@@ -35,7 +35,7 @@ function Login() {
             </button>
 
             <Link
-              to="/"
+              to="/register"
               className="flex-1 py-2 text-center text-gray-500 font-medium"
             >
               Create Account
