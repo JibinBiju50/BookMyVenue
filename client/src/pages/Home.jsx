@@ -1,8 +1,29 @@
 import { Link, useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import { useState } from "react";
+import { Form } from "react-router-dom";
 
 function Home() {
   const navigate = useNavigate();
+
+  const [district, setDistrict] = useState("");
+  const [town, setTown] = useState("");
+  const [category, setCategory] = useState("");
+  const [eventDate, setEventDate] = useState("");
+
+
+    const handleManualSearch = (e) => {
+    e.preventDefault();
+
+    const queryParams = new URLSearchParams();
+
+    if (district) queryParams.set("district", district);
+    if (town) queryParams.set("town", town);
+    if (category) queryParams.set("category", category);
+    if (eventDate) queryParams.set("eventDate", eventDate);
+
+    navigate(`/venues?${queryParams.toString()}`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#faf7f5] to-white">
@@ -94,7 +115,7 @@ function Home() {
         </div>
 
         {/* Search Card */}
-        <div className="mt-20 bg-white rounded-[32px] shadow-2xl border border-gray-100 p-10">
+        <Form onSubmit={handleManualSearch} className="mt-20 bg-white rounded-[32px] shadow-2xl border border-gray-100 p-10">
           <h2 className="text-3xl font-semibold text-center text-gray-900 mb-10">
             Find Your Perfect Venue
           </h2>
@@ -104,7 +125,7 @@ function Home() {
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Location
               </label>
-              <select className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
+              <select value={district} onChange={(e) => setDistrict(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
                 <option>Select District</option>
                 <option>Ernakulam</option>
                 <option>Kottayam</option>
@@ -117,65 +138,48 @@ function Home() {
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Category
               </label>
-              <select className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>All Categories</option>
-                <option>Wedding Hall</option>
-                <option>Convention Center</option>
-                <option>Resort</option>
-                <option>Conference Hall</option>
-              </select>
+              <input type="text" placeholder="Town/Area" value={town} onChange={setTown} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
+              </input>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
-                Event Type
+                Date
               </label>
-              <select className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
+              <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
                 <option>Any Event</option>
                 <option>Wedding</option>
                 <option>Reception</option>
                 <option>Birthday Party</option>
                 <option>Corporate Event</option>
-              </select>
+              </input>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
-                Capacity
+                Category
               </label>
-              <select className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>Any Capacity</option>
-                <option>Up to 50</option>
-                <option>50 - 100</option>
-                <option>100 - 300</option>
-                <option>300 - 500</option>
-                <option>500+</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Budget
-              </label>
-              <select className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>Any Budget</option>
-                <option>₹5k - ₹20k</option>
-                <option>₹20k - ₹50k</option>
-                <option>₹50k - ₹1L</option>
-                <option>₹1L+</option>
+              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
+                <option>Venue Type</option>
+                <option>Banquet Hall</option>
+                <option>Wedding Hall</option>
+                <option>Convention Center</option>
+                <option>Resort</option>
+                <option>Conference Hall</option>
+                <option>Outdoor</option>
               </select>
             </div>
           </div>
 
           <div className="flex justify-center mt-10">
             <button
-              onClick={() => navigate("/venues")}
+              type="submit"
               className="px-14 py-4 bg-gradient-to-r from-red-600 to-[#4a1625] text-white text-lg font-medium rounded-2xl shadow-xl hover:scale-105 transition-all duration-300"
             >
               Search Venues
             </button>
           </div>
-        </div>
+        </Form>
 
         {/* Stats */}
         <div className="mt-24 flex flex-wrap justify-center gap-20 text-center">
