@@ -13,7 +13,6 @@ const venueSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // renamed from "type" to "category" for consistency across schema, API, frontend
     category: {
       type: String,
       enum: [
@@ -92,7 +91,7 @@ const venueSchema = new mongoose.Schema(
       },
       pricingModel: {
         type: String,
-        enum: ["per_day", "per_event"],
+        enum: ["per_day", "per_hour", "per_event"],
         default: "per_day",
       },
     },
@@ -108,13 +107,21 @@ const venueSchema = new mongoose.Schema(
     },
 
     contactInfo: {
-      phone: String,
-      email: String,
-      website: String,
+      phone: {
+        type: String,
+        trim: true,
+      },
+      email: {
+        type: String,
+        trim: true,
+        lowercase: true,
+      },
+      website: {
+        type: String,
+        trim: true,
+      },
     },
 
-    // seed venues → "approved" (visible in listings immediately)
-    // owner-submitted venues → "pending" by default (Week 2 admin review)
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
@@ -126,13 +133,10 @@ const venueSchema = new mongoose.Schema(
       default: true,
     },
 
-    // marks sample/seed venues so seeder never deletes real owner data
     isSeed: {
       type: Boolean,
       default: false,
     },
-
-    // rating removed — reviews are out of scope for Phase 1 MVP
 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -145,10 +149,7 @@ const venueSchema = new mongoose.Schema(
   }
 );
 
-// Geo index — powers "Use Current Location" $near queries
 venueSchema.index({ location: "2dsphere" });
-
-// Text index — powers keyword search by name / town / district
 venueSchema.index({ name: "text", town: "text", district: "text" });
 
 const Venue = mongoose.model("Venue", venueSchema);
