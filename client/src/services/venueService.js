@@ -1,4 +1,4 @@
-import apiClient from "./api";
+import apiClient from "./apiClient.js";
 
 export const getVenues = async (filters = {}) => {
   const response = await apiClient.get("/venues", {

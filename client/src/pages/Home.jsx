@@ -13,7 +13,7 @@ function Home() {
   const [eventDate, setEventDate] = useState("");
 
 
-    const handleManualSearch = (e) => {
+  const handleManualSearch = (e) => {
     e.preventDefault();
 
     const queryParams = new URLSearchParams();
@@ -28,7 +28,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#faf7f5] to-white">
-      <Navbar />
+
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex flex-col items-center text-center">
@@ -90,9 +90,9 @@ function Home() {
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
-                Category
+                Town/Area
               </label>
-              <input type="text" placeholder="Town/Area" value={town} onChange={setTown} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
+              <input type="text" placeholder="Town/Area" value={town} onChange={e => setTown(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
               </input>
             </div>
 
@@ -101,11 +101,6 @@ function Home() {
                 Date
               </label>
               <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>Any Event</option>
-                <option>Wedding</option>
-                <option>Reception</option>
-                <option>Birthday Party</option>
-                <option>Corporate Event</option>
               </input>
             </div>
 
@@ -114,14 +109,18 @@ function Home() {
                 Category
               </label>
               <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>Venue Type</option>
-                <option>Banquet Hall</option>
-                <option>Wedding Hall</option>
-                <option>Convention Center</option>
-                <option>Resort</option>
-                <option>Conference Hall</option>
-                <option>Outdoor</option>
-              </select>
+                  <option value="">Venue Type</option>
+                  <option value="banquet hall">Banquet Hall</option>
+                  <option value="auditorium">Auditorium</option>
+                  <option value="convention center">Convention Center</option>
+                  <option value="outdoor">Outdoor</option>
+                  <option value="rooftop">Rooftop</option>
+                  <option value="resort">Resort</option>
+                  <option value="hotel ballroom">Hotel Ballroom</option>
+                  <option value="community hall">Community Hall</option>
+                  <option value="wedding hall">Wedding Hall</option>
+                  <option value="conference room">Conference Room</option>
+                </select>
             </div>
           </div>
 

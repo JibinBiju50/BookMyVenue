@@ -1,75 +1,50 @@
 import { MapPin, Star, Users, Wifi, Coffee } from "lucide-react";
-
-const venues = [
-  {
-    id: 1,
-    name: "The Roastery Loft",
-    category: "Cafe",
-    location: "Koramangala, Bangalore",
-    price: 450,
-    rating: 4.9,
-    capacity: 40,
-    image:
-      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 2,
-    name: "Spotlight Auditorium",
-    category: "Auditorium",
-    location: "Andheri West, Mumbai",
-    price: 2400,
-    rating: 4.8,
-    capacity: 320,
-    image:
-      "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 3,
-    name: "Skyline Boardroom",
-    category: "Conference",
-    location: "Cyber Hub, Gurgaon",
-    price: 800,
-    rating: 4.7,
-    capacity: 18,
-    image:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 4,
-    name: "Garden Bliss",
-    category: "Outdoor",
-    location: "Kochi",
-    price: 1500,
-    rating: 4.9,
-    capacity: 120,
-    image:
-      "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 5,
-    name: "Urban Workspace",
-    category: "Coworking",
-    location: "Bangalore",
-    price: 650,
-    rating: 4.6,
-    capacity: 25,
-    image:
-      "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=900&q=80",
-  },
-  {
-    id: 6,
-    name: "Royal Banquet",
-    category: "Hall",
-    location: "Thrissur",
-    price: 3500,
-    rating: 4.8,
-    capacity: 300,
-    image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=80",
-  },
-];
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { getVenues, getNearbyVenues } from "../services/venueService.js";
 
 export default function VenuePage() {
+    const [searchParams] = useSearchParams();
+
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const isNearbySearch =
+    searchParams.has("lat") && searchParams.has("lng");
+
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const filters = Object.fromEntries(searchParams.entries());
+
+        const result = isNearbySearch
+          ? await getNearbyVenues(filters)
+          : await getVenues(filters);
+
+        setVenues(result.data || []);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || "Failed to fetch venues"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVenues();
+  }, [searchParams, isNearbySearch]);
+
+  if (loading) {
+    return <p>Loading venues...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
   return (
     <section className="bg-[#faf8f5] min-h-screen py-16">
       <div className="max-w-7xl mx-auto px-6">
@@ -84,27 +59,6 @@ export default function VenuePage() {
             Loved by the{" "}
             <span className="text-[#8b1e2d]">community</span>
           </h1>
-
-          <div className="flex flex-wrap gap-3 mt-6 md:mt-0">
-            {[
-              "All",
-              "Cafes",
-              "Auditoriums",
-              "Outdoor",
-              "Coworking",
-            ].map((item, index) => (
-              <button
-                key={index}
-                className={`px-5 py-2 rounded-full border transition ${
-                  index === 0
-                    ? "bg-gray-900 text-white"
-                    : "bg-white hover:bg-gray-100"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -118,7 +72,7 @@ export default function VenuePage() {
               <div className="relative">
 
                 <img
-                  src={venue.image}
+                  src={venue.images?.[0] || "/placeholder-venue.jpg"}
                   alt={venue.name}
                   className="w-full h-64 object-cover"
                 />
@@ -141,13 +95,13 @@ export default function VenuePage() {
                   </h2>
 
                   <span className="font-semibold text-[#8b1e2d]">
-                    ₹{venue.price}/hr
+                    Starting from ₹{venue.pricing?.basePrice}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2 text-gray-500 mt-3">
                   <MapPin size={16} />
-                  {venue.location}
+                  {venue.town}, {venue.district}
                 </div>
 
                 <div className="flex justify-between items-center mt-6">
@@ -156,7 +110,7 @@ export default function VenuePage() {
 
                     <div className="flex items-center gap-1">
                       <Users size={16} />
-                      {venue.capacity}
+                      Capacity: {venue.capacity?.min} - {venue.capacity?.max}
                     </div>
 
                     <Wifi size={16} />
