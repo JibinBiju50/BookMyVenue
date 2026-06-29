@@ -64,9 +64,7 @@ function Home() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex flex-col items-center text-center">
-          <span className="px-4 py-2 bg-red-100 text-[#8b1e2d] rounded-full text-sm font-medium">
-            Kerala's Trusted Venue Booking Platform
-          </span>
+          
 
           <h1 className="mt-8 text-6xl md:text-8xl font-semibold leading-[1.05] tracking-tight text-gray-900">
             Find the{" "}
@@ -92,7 +90,7 @@ function Home() {
             </Link>
 
             <Link
-              to="/login"
+              to="owner/login"
               className="px-10 py-4 rounded-2xl text-lg font-medium bg-white border-2 border-[#8b1e2d] text-[#8b1e2d] hover:bg-[#8b1e2d] hover:text-white shadow-lg hover:scale-105 transition-all duration-300"
             >
               🏢 List Your Venue

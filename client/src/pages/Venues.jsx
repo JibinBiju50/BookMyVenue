@@ -45,29 +45,23 @@ export default function VenuePage() {
   return (
     <section className="bg-[#faf8f5] min-h-screen py-16">
       <div className="max-w-7xl mx-auto px-6">
-
         <p className="uppercase tracking-[4px] text-[#8b1e2d] text-sm font-semibold">
           Featured Venues
         </p>
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-2 mb-10">
-
           <h1 className="text-5xl font-serif font-semibold text-gray-900">
-            Loved by the{" "}
-            <span className="text-[#8b1e2d]">community</span>
+            Loved by the <span className="text-[#8b1e2d]">community</span>
           </h1>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
           {venues.map((venue) => (
             <div
               key={venue.id}
               className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-2xl hover:-translate-y-2 duration-300"
             >
-
               <div className="relative">
-
                 <img
                   src={venue.images?.[0] || "/placeholder-venue.jpg"}
                   alt={venue.name}
@@ -85,11 +79,8 @@ export default function VenuePage() {
               </div>
 
               <div className="p-6">
-
                 <div className="flex justify-between items-center">
-                  <h2 className="font-bold text-xl">
-                    {venue.name}
-                  </h2>
+                  <h2 className="font-bold text-xl">{venue.name}</h2>
 
                   <span className="font-semibold text-[#8b1e2d]">
                     Starting from ₹{venue.pricing?.basePrice}
@@ -102,33 +93,27 @@ export default function VenuePage() {
                 </div>
 
                 <div className="flex justify-between items-center mt-6">
-
                   <div className="flex gap-4 text-gray-500">
-
                     <div className="flex items-center gap-1">
                       <Users size={16} />
                       Capacity: {venue.capacity?.min} - {venue.capacity?.max}
                     </div>
 
                     <Wifi size={16} />
-
                     <Coffee size={16} />
-
                   </div>
 
-                  <button className="bg-[#8b1e2d] hover:bg-[#6f1824] text-white px-5 py-2 rounded-xl transition">
+                  <button
+                    onClick={() => navigate(`/venue/${venue.id}`)}
+                    className="bg-red-700 text-white px-5 py-2 rounded-lg hover:bg-red-800 transition"
+                  >
                     Book Now
                   </button>
-
                 </div>
-
               </div>
-
             </div>
           ))}
-
         </div>
-
       </div>
     </section>
   );
