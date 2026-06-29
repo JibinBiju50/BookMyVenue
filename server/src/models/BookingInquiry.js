@@ -8,7 +8,6 @@ const bookingInquirySchema = new mongoose.Schema(
       required: [true, "Venue is required"],
     },
 
-    // Optional because Phase 1 can allow public users to send inquiries
     // without forcing login. If only logged-in users can inquire, make this required.
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -91,9 +90,6 @@ bookingInquirySchema.index(
   }
 );
 
-const BookingInquiry = mongoose.model(
-  "BookingInquiry",
-  bookingInquirySchema
-);
+const BookingInquiry = mongoose.model("BookingInquiry", bookingInquirySchema);
 
 export default BookingInquiry;
