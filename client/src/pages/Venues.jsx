@@ -4,14 +4,13 @@ import { useSearchParams } from "react-router-dom";
 import { getVenues, getNearbyVenues } from "../services/venueService.js";
 
 export default function VenuePage() {
-    const [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const isNearbySearch =
-    searchParams.has("lat") && searchParams.has("lng");
+  const isNearbySearch = searchParams.has("lat") && searchParams.has("lng");
 
   useEffect(() => {
     const fetchVenues = async () => {
@@ -21,9 +20,7 @@ export default function VenuePage() {
 
         const filters = Object.fromEntries(searchParams.entries());
 
-        const result = isNearbySearch
-          ? await getNearbyVenues(filters)
-          : await getVenues(filters);
+        const result = isNearbySearch ? await getNearbyVenues(filters) : await getVenues(filters);
 
         setVenues(result.data || []);
       } catch (err) {

@@ -1,8 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { MapPin } from "lucide-react";
 import { useState } from "react";
 import { Form } from "react-router-dom";
-import Navbar from "../components/Navbar";
+
 
 function Home() {
   const navigate = useNavigate();
@@ -11,6 +10,8 @@ function Home() {
   const [town, setTown] = useState("");
   const [category, setCategory] = useState("");
   const [eventDate, setEventDate] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
 
 
   const handleManualSearch = (e) => {
@@ -24,6 +25,39 @@ function Home() {
     if (eventDate) queryParams.set("eventDate", eventDate);
 
     navigate(`/venues?${queryParams.toString()}`);
+  };
+
+  const handleUseCurrentLocation = () => {
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setLocationLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        const queryParams = new URLSearchParams();
+
+        queryParams.set("lat", latitude);
+        queryParams.set("lng", longitude);
+
+        if (category) queryParams.set("category", category);
+        if (eventDate) queryParams.set("eventDate", eventDate);
+
+        navigate(`/venues/nearby?${queryParams.toString()}`);
+
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationError("Unable to access your location. Use manual search.");
+        setLocationLoading(false);
+      }
+    );
   };
 
   return (
@@ -68,23 +102,53 @@ function Home() {
           </div>
         </div>
 
-        {/* Search Card */}
-        <Form onSubmit={handleManualSearch} className="mt-20 bg-white rounded-[32px] shadow-2xl border border-gray-100 p-10">
-          <h2 className="text-3xl font-semibold text-center text-gray-900 mb-10">
-            Find Your Perfect Venue
-          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        {/* Search Card */}
+        <form
+          onSubmit={handleManualSearch}
+          className="mt-20 bg-white rounded-[32px] shadow-2xl border border-gray-100 p-10"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+            <div className="text-center lg:text-left">
+              <h2 className="text-3xl font-semibold text-gray-900">
+                Find Your Perfect Venue
+              </h2>
+              <p className="mt-2 text-gray-500">
+                Search by location, date, and venue category.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              disabled={locationLoading}
+              className="px-6 py-4 rounded-2xl border-2 border-[#8b1e2d] text-[#8b1e2d] bg-white font-medium shadow-md hover:bg-[#8b1e2d] hover:text-white hover:scale-105 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {locationLoading ? "Getting Location..." : "📍 Use Current Location"}
+            </button>
+          </div>
+
+          {locationError && (
+            <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              {locationError}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
-                Location
+                District
               </label>
-              <select value={district} onChange={(e) => setDistrict(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                <option>Select District</option>
-                <option>Ernakulam</option>
-                <option>Kottayam</option>
-                <option>Kozhikode</option>
-                <option>Thiruvananthapuram</option>
+              <select
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
+              >
+                <option value="">Select District</option>
+                <option value="Ernakulam">Ernakulam</option>
+                <option value="Kottayam">Kottayam</option>
+                <option value="Kozhikode">Kozhikode</option>
+                <option value="Thiruvananthapuram">Thiruvananthapuram</option>
               </select>
             </div>
 
@@ -92,35 +156,48 @@ function Home() {
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Town/Area
               </label>
-              <input type="text" placeholder="Town/Area" value={town} onChange={e => setTown(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-              </input>
+              <input
+                type="text"
+                placeholder="Town/Area"
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+                className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Date
               </label>
-              <input type="date" value={eventDate} onChange={e => setEventDate(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-              </input>
+              <input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Category
               </label>
-              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none">
-                  <option value="">Venue Type</option>
-                  <option value="banquet hall">Banquet Hall</option>
-                  <option value="auditorium">Auditorium</option>
-                  <option value="convention center">Convention Center</option>
-                  <option value="outdoor">Outdoor</option>
-                  <option value="rooftop">Rooftop</option>
-                  <option value="resort">Resort</option>
-                  <option value="hotel ballroom">Hotel Ballroom</option>
-                  <option value="community hall">Community Hall</option>
-                  <option value="wedding hall">Wedding Hall</option>
-                  <option value="conference room">Conference Room</option>
-                </select>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
+              >
+                <option value="">Venue Type</option>
+                <option value="banquet hall">Banquet Hall</option>
+                <option value="auditorium">Auditorium</option>
+                <option value="convention center">Convention Center</option>
+                <option value="outdoor">Outdoor</option>
+                <option value="rooftop">Rooftop</option>
+                <option value="resort">Resort</option>
+                <option value="hotel ballroom">Hotel Ballroom</option>
+                <option value="community hall">Community Hall</option>
+                <option value="wedding hall">Wedding Hall</option>
+                <option value="conference room">Conference Room</option>
+              </select>
             </div>
           </div>
 
@@ -132,7 +209,7 @@ function Home() {
               Search Venues
             </button>
           </div>
-        </Form>
+        </form>
 
         {/* Stats */}
         <div className="mt-24 flex flex-wrap justify-center gap-20 text-center">

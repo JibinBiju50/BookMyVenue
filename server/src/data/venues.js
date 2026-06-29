@@ -3,7 +3,7 @@ const venues = [
     name: "Kochi Grand Convention Hall",
     description:
       "A spacious convention venue suitable for weddings, receptions, exhibitions, and corporate events.",
-    category: "convention_center",
+    category: "convention center",
     district: "Ernakulam",
     town: "Kochi",
     address: "MG Road, Kochi, Ernakulam, Kerala",
@@ -71,7 +71,7 @@ const venues = [
     name: "Kozhikode Marina Banquet Hall",
     description:
       "A modern banquet hall suitable for engagement ceremonies, birthdays, and private functions.",
-    category: "banquet_hall",
+    category: "banquet hall",
     district: "Kozhikode",
     town: "Kozhikode",
     address: "Mavoor Road, Kozhikode, Kerala",
@@ -105,7 +105,7 @@ const venues = [
     name: "Thrissur Heritage Wedding Hall",
     description:
       "A traditional wedding hall designed for marriage functions, receptions, and family events.",
-    category: "wedding_hall",
+    category: "wedding hall",
     district: "Thrissur",
     town: "Thrissur",
     address: "Swaraj Round, Thrissur, Kerala",
@@ -207,7 +207,7 @@ const venues = [
     name: "Kollam Sapphire Community Hall",
     description:
       "A budget-friendly community hall suitable for local events, meetings, and small functions.",
-    category: "community_hall",
+    category: "community hall",
     district: "Kollam",
     town: "Kollam",
     address: "Chinnakada, Kollam, Kerala",
@@ -241,7 +241,7 @@ const venues = [
     name: "Palakkad Greenfield Party Hall",
     description:
       "A compact party hall suitable for birthdays, engagement functions, and family celebrations.",
-    category: "banquet_hall",
+    category: "banquet hall",
     district: "Palakkad",
     town: "Palakkad",
     address: "Stadium Bypass Road, Palakkad, Kerala",
@@ -309,7 +309,7 @@ const venues = [
     name: "Malappuram Crescent Wedding Hall",
     description:
       "A large wedding hall for marriage functions, receptions, and community gatherings.",
-    category: "wedding_hall",
+    category: "wedding hall",
     district: "Malappuram",
     town: "Malappuram",
     address: "Down Hill, Malappuram, Kerala",
@@ -377,7 +377,7 @@ const venues = [
     name: "Kasaragod Pearl Conference Room",
     description:
       "A small conference venue suitable for business meetings, workshops, and training sessions.",
-    category: "conference_room",
+    category: "conference room",
     district: "Kasaragod",
     town: "Kasaragod",
     address: "MG Road, Kasaragod, Kerala",
