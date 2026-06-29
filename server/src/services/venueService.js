@@ -156,8 +156,8 @@ export const getAvailableVenuesService = async (query = {}) => {
  * MongoDB needs:
  * coordinates: [longitude, latitude]
  */
-export const getNearbyVenuesService = async (query) => {
-  const { lat, lng, maxDistance = 25000 } = query;
+export const getNearbyVenuesService = async (query = {}) => {
+  const { lat, lng, maxDistance = 45000 } = query;
 
   if (!lat || !lng) {
     const error = new Error("lat and lng are required");
@@ -169,7 +169,11 @@ export const getNearbyVenuesService = async (query) => {
   const longitude = Number(lng);
   const distance = Number(maxDistance);
 
-  if (Number.isNaN(latitude) || Number.isNaN(longitude) || Number.isNaN(distance)) {
+  if (
+    Number.isNaN(latitude) ||
+    Number.isNaN(longitude) ||
+    Number.isNaN(distance)
+  ) {
     const error = new Error("lat, lng, and maxDistance must be numbers");
     error.statusCode = 400;
     throw error;
@@ -177,18 +181,34 @@ export const getNearbyVenuesService = async (query) => {
 
   const filter = await buildVenueFilter(query);
 
-  filter.location = {
-    $near: {
-      $geometry: {
-        type: "Point",
-        coordinates: [longitude, latitude],
+  const venues = await Venue.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          // MongoDB expects [longitude, latitude], not [latitude, longitude]
+          coordinates: [longitude, latitude],
+        },
+        distanceField: "distanceMeters",
+        maxDistance: distance,
+        spherical: true,
+        query: filter,
       },
-      // Distance is in meters. Default 15000 = 15 km.
-      $maxDistance: distance,
     },
-  };
-
-  const venues = await Venue.find(filter);
+    {
+      $addFields: {
+        // Convert meters to km and round to 1 decimal place
+        distanceKm: {
+          $round: [{ $divide: ["$distanceMeters", 1000] }, 1],
+        },
+      },
+    },
+    {
+      $sort: {
+        distanceMeters: 1,
+      },
+    },
+  ]);
 
   return venues;
 };

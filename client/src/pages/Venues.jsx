@@ -1,6 +1,6 @@
 import { MapPin, Star, Users, Wifi, Coffee } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { getVenues, getNearbyVenues } from "../services/venueService.js";
 
 export default function VenuePage() {
@@ -58,7 +58,7 @@ export default function VenuePage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {venues.map((venue) => (
             <div
-              key={venue.id}
+              key={venue._id}
               className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-2xl hover:-translate-y-2 duration-300"
             >
               <div className="relative">
@@ -92,6 +92,13 @@ export default function VenuePage() {
                   {venue.town}, {venue.district}
                 </div>
 
+                {isNearbySearch && venue.distanceKm !== undefined && (
+                  <div className="flex items-center gap-2 text-gray-500 mt-2">
+                    <MapPin size={16} />
+                    <span>{venue.distanceKm} km away</span>
+                  </div>
+                )}
+
                 <div className="flex justify-between items-center mt-6">
                   <div className="flex gap-4 text-gray-500">
                     <div className="flex items-center gap-1">
@@ -103,12 +110,12 @@ export default function VenuePage() {
                     <Coffee size={16} />
                   </div>
 
-                  <button
-                    onClick={() => navigate(`/venue/${venue.id}`)}
-                    className="bg-red-700 text-white px-5 py-2 rounded-lg hover:bg-red-800 transition"
+                  <Link
+                    to={`/venues/${venue._id}`}
+                    className="bg-[#8b1e2d] hover:bg-[#6f1824] text-white px-5 py-2 rounded-xl transition"
                   >
-                    Book Now
-                  </button>
+                    View Details
+                  </Link>
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import VenuePage from "../pages/Venues";
+import VenueDetails from "../pages/VenueDetails";
 
 const router = createBrowserRouter([
     {
@@ -14,7 +15,8 @@ const router = createBrowserRouter([
             {path: "register", element: <Register />},
             {path: "login", element: <Login />},
             {path: "venues", element: <VenuePage />},
-            {path: "venues/nearby", element: <VenuePage />}
+            {path: "venues/nearby", element: <VenuePage />},
+            {path: "venues/:id", element: <VenueDetails />}
         ]
     }
 ])
