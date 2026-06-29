@@ -1,5 +1,5 @@
 import express from 'express';
-import { getVenues, getNearbyVenues } from "../controllers/venueController.js";
+import { getVenues, getNearbyVenues, getVenueById } from "../controllers/venueController.js";
 
 const router = express.Router();
 
@@ -9,5 +9,7 @@ router.get("/", getVenues);
 // Public nearby venue route
 // Must come before "/:id"
 router.get("/nearby", getNearbyVenues);
+
+router.get("/:id", getVenueById);
 
 export default router;

@@ -1,4 +1,4 @@
-import { getAvailableVenuesService, getNearbyVenuesService } from "../services/venueService.js";
+import { getAvailableVenuesService, getNearbyVenuesService, getVenueByIdService } from "../services/venueService.js";
 
 export const getVenues = async (req, res) => {
   try {
@@ -13,6 +13,22 @@ export const getVenues = async (req, res) => {
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Failed to fetch venues",
+    });
+  }
+};
+
+export const getVenueById = async (req, res) => {
+  try {
+    const venue = await getVenueByIdService(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      data: venue,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to fetch venue",
     });
   }
 };

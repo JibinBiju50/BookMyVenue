@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import venueRoutes from "./routes/venueRoutes.js"
 import authRoutes from "./routes/authRoutes.js";
-
+import bookingInquiryRoutes from "./routes/bookingInquiryRoutes.js"
 const app = express();
 
 app.use(cors({
@@ -22,5 +22,6 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/venues", venueRoutes);
+app.use("/api/booking-inquiries", bookingInquiryRoutes);
 
 export default app;

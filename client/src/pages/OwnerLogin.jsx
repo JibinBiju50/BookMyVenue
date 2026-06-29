@@ -1,112 +1,201 @@
-import { useNavigate, Link } from "react-router-dom";
-import { MapPin } from "lucide-react";
-function Login() {
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  MapPin,
+  Star,
+  Users,
+  Wifi,
+  Car,
+  Music,
+  Camera,
+  Phone,
+  Mail,
+} from "lucide-react";
+
+import { getVenueById } from "../services/venueService.js";
+
+function VenueDetails() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [venue, setVenue] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-    // later: API login logic goes here
-    navigate("/home");
-  };
+  useEffect(() => {
+    const fetchVenue = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const result = await getVenueById(id);
+
+        setVenue(result.data);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch venue");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVenue();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl text-gray-600">Loading venue...</p>
+      </div>
+    );
+  }
+
+  if (error || !venue) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-3xl font-bold">
+          {error || "Venue Not Found"}
+        </h1>
+      </div>
+    );
+  }
+
+  const mainImage = venue.images?.[0] || "/placeholder-venue.jpg";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#faf7f5] px-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-         
+    <div className="bg-gray-50 min-h-screen">
+      <div className="relative">
+        <img
+          src={mainImage}
+          alt={venue.name}
+          className="w-full h-[420px] object-cover"
+        />
 
-<div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-600 to-[#4a1625] flex items-center justify-center">
-  <MapPin size={24} className="text-white" />
-</div>
+        <div className="absolute inset-0 bg-black/40 flex items-end">
+          <div className="max-w-7xl mx-auto w-full px-6 pb-10 text-white">
+            <h1 className="text-5xl font-bold">{venue.name}</h1>
 
-          <h1 className="text-3xl font-semibold">
-            BookMy<span className="text-[#8b1e2d]">Venue</span>
-          </h1>
+            <div className="flex flex-wrap gap-6 mt-4 text-lg">
+              <div className="flex items-center gap-2">
+                <MapPin size={20} />
+                {venue.town}, {venue.district}
+              </div>
+
+              {venue.rating && (
+                <div className="flex items-center gap-2">
+                  <Star size={18} fill="#FFD700" color="#FFD700" />
+                  {venue.rating}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+      </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-3xl shadow-lg p-8">
-          {/* Tabs */}
-          <div className="flex bg-gray-100 rounded-full p-1 mb-8">
-            <button className="flex-1 py-2 rounded-full bg-white shadow-sm font-medium">
-              Sign In
-            </button>
+      <div className="max-w-7xl mx-auto px-6 py-10 grid lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white rounded-2xl shadow p-8">
+            <h2 className="text-2xl font-bold mb-4">About Venue</h2>
 
-            <Link
-              to="/owner/register-venue"
-              className="flex-1 py-2 text-center text-gray-500 font-medium"
-            >
-              Create Account
-            </Link>
+            <p className="text-gray-600 leading-8">
+              {venue.description}
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-left text-sm mb-2">
-                Email
-              </label>
+          <div className="bg-white rounded-2xl shadow p-8">
+            <h2 className="text-2xl font-bold mb-6">Amenities</h2>
 
-              <input
-                type="email"
-                required
-                placeholder="Enter your email"
-                className="w-full p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-[#8b1e2d] focus:ring-4 focus:ring-[#8b1e2d]/15"
-              />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="flex flex-col items-center">
+                <Wifi className="text-red-700" />
+                <p className="mt-2 text-sm">Wi-Fi</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <Car className="text-red-700" />
+                <p className="mt-2 text-sm">Parking</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <Music className="text-red-700" />
+                <p className="mt-2 text-sm">Music</p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <Camera className="text-red-700" />
+                <p className="mt-2 text-sm">Photography</p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-left text-sm mb-2">
-                Password
-              </label>
+            <div className="grid md:grid-cols-2 gap-3 mt-8">
+              {venue.amenities?.map((item) => (
+                <div key={item} className="bg-gray-100 rounded-lg px-4 py-3">
+                  ✓ {item}
+                </div>
+              ))}
+            </div>
+          </div>
 
-              <input
-                type="password"
-                required
-                placeholder="Enter your password"
-                className="w-full p-3.5 border border-gray-200 rounded-xl focus:outline-none focus:border-[#8b1e2d] focus:ring-4 focus:ring-[#8b1e2d]/15"
-              />
+          <div className="bg-white rounded-2xl shadow p-8">
+            <h2 className="text-2xl font-bold mb-6">Gallery</h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              {venue.images?.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`${venue.name} gallery ${index + 1}`}
+                  className="rounded-xl h-56 w-full object-cover hover:scale-105 transition"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-24">
+            <h2 className="text-4xl font-bold text-red-700">
+              ₹{venue.pricing?.basePrice}
+              <span className="text-lg text-gray-500">
+                /{venue.pricing?.pricingModel?.replace("per_", "") || "event"}
+              </span>
+            </h2>
+
+            <div className="mt-8 space-y-5">
+              <div className="flex items-center gap-3">
+                <Users className="text-red-700" />
+                Capacity: {venue.capacity?.min} - {venue.capacity?.max} Guests
+              </div>
+
+              {venue.contactInfo?.phone && (
+                <div className="flex items-center gap-3">
+                  <Phone className="text-red-700" />
+                  {venue.contactInfo.phone}
+                </div>
+              )}
+
+              {venue.contactInfo?.email && (
+                <div className="flex items-center gap-3">
+                  <Mail className="text-red-700" />
+                  {venue.contactInfo.email}
+                </div>
+              )}
             </div>
 
             <button
-              type="submit"
-              className="w-full py-3.5 rounded-xl text-white font-semibold bg-gradient-to-r from-red-600 to-[#4a1625] hover:shadow-lg transition"
+              onClick={() => navigate(`/booking/${venue._id}`)}
+              className="mt-8 w-full bg-red-700 text-white py-4 rounded-xl hover:bg-red-800 transition"
             >
-              Sign In
+              Send Booking Inquiry
             </button>
-          </form>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t"></div>
-            <span className="px-3 text-gray-400 text-sm">OR</span>
-            <div className="flex-1 border-t"></div>
+            <button className="mt-4 w-full border border-red-700 text-red-700 py-4 rounded-xl hover:bg-red-50 transition">
+              Contact Owner
+            </button>
           </div>
-
-          {/* Google Button */}
-          <button className="w-full border border-gray-200 rounded-xl py-3 flex items-center justify-center gap-2 hover:bg-gray-50">
-            <span>🔵</span>
-            Continue with Google
-          </button>
-
-          <p className="text-xs text-gray-400 text-center mt-6">
-            By continuing you agree to our community guidelines
-          </p>
-        </div>
-
-        {/* Back Link */}
-        <div className="text-center mt-6">
-          <Link
-            to="/home"
-            className="text-gray-500 hover:text-[#8b1e2d]"
-          >
-            ← Back to home
-          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-export default Login; 
+export default VenueDetails;

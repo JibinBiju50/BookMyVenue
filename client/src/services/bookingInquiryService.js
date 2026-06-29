@@ -1,0 +1,19 @@
+import apiClient from "./apiClient";
+
+export const createBookingInquiry = async (bookingData) => {
+  const response = await apiClient.post("/booking-inquiries", bookingData);
+  return response.data;
+};
+
+export const getOwnerBookingInquiries = async () => {
+  const response = await apiClient.get("/booking-inquiries/owner");
+  return response.data;
+};
+
+export const updateBookingInquiryStatus = async (inquiryId, status) => {
+  const response = await apiClient.patch(`/booking-inquiries/${inquiryId}/status`, {
+    status,
+  });
+
+  return response.data;
+};

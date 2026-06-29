@@ -1,0 +1,30 @@
+import express from "express";
+
+import {
+  createBookingInquiry,
+  getOwnerBookingInquiries,
+  updateBookingInquiryStatus,
+} from "../controllers/bookingInquiryController.js";
+
+import { authenticate } from "../middleware/authMiddleware.js";
+import { authorize } from "../middleware/roleMiddleware.js";
+
+const router = express.Router();
+
+router.post("/", createBookingInquiry);
+
+router.get(
+  "/owner",
+  authenticate,
+  authorize("owner"),
+  getOwnerBookingInquiries
+);
+
+router.patch(
+  "/:id/status",
+  authenticate,
+  authorize("owner"),
+  updateBookingInquiryStatus
+);
+
+export default router;
