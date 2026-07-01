@@ -9,6 +9,7 @@ import BookingInquiry from "../pages/BookingInquiry";
 import OwnerDashboard from "../pages/OwnerDashboard";
 import AdminDashboard from "../pages/AdminDashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
+import OwnerVenueCreate from "../pages/ownerVenueCreate";
 
 const router = createBrowserRouter([
     {
@@ -28,6 +29,14 @@ const router = createBrowserRouter([
                     {
                         path: "owner/dashboard",
                         element: <OwnerDashboard />
+                    },
+                    {
+                        path: "owner/venues",
+                        
+                    },
+                    {
+                        path: "owner/venues/new",
+                        element: <OwnerVenueCreate />
                     }
                 ]
             },

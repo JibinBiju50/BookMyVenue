@@ -10,6 +10,7 @@ import {
   getOwnerBookingInquiries,
   updateBookingInquiryStatus,
 } from "../services/bookingInquiryService.js";
+import { Link } from "react-router-dom";
 
 function OwnerDashboard() {
   const [bookings, setBookings] = useState([]);
@@ -96,13 +97,31 @@ function OwnerDashboard() {
 
   return (
     <div className="min-h-screen bg-[#faf7f5] p-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#4a1625]">
-          Owner Dashboard
-        </h1>
-        <p className="text-gray-500 mt-2">
-          Manage your venues, bookings and inquiries.
-        </p>
+      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold text-[#4a1625]">
+            Owner Dashboard
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Manage your venues, bookings and inquiries.
+          </p>
+        </div>
+
+        <div className="flex gap-3">
+          <Link
+            to="/owner/venues"
+            className="px-6 py-3 rounded-xl border border-[#8b1e2d] text-[#8b1e2d] font-medium hover:bg-red-50 transition"
+          >
+            My Venues
+          </Link>
+
+          <Link
+            to="/owner/venues/new"
+            className="px-6 py-3 rounded-xl text-white font-medium bg-gradient-to-r from-[#8b1e2d] to-[#4a1625] hover:shadow-lg transition"
+          >
+            + Submit Venue
+          </Link>
+        </div>
       </div>
 
       {error && (
