@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle,
   XCircle,
@@ -6,55 +6,96 @@ import {
   Calendar,
 } from "lucide-react";
 
-function OwnerDashboard() {
-  const [bookings, setBookings] = useState([
-    {
-      id: 1,
-      customer: "John Mathew",
-      venue: "Royal Hall",
-      date: "28 Jul 2026",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      customer: "Anna Joseph",
-      venue: "Green Garden",
-      date: "30 Jul 2026",
-      status: "Accepted",
-    },
-    {
-      id: 3,
-      customer: "David Thomas",
-      venue: "Lake View",
-      date: "2 Aug 2026",
-      status: "Rejected",
-    },
-  ]);
+import {
+  getOwnerBookingInquiries,
+  updateBookingInquiryStatus,
+} from "../services/bookingInquiryService.js";
 
-  const updateBookingStatus = (id, status) => {
-    setBookings((prevBookings) =>
-      prevBookings.map((booking) =>
-        booking.id === id
-          ? { ...booking, status }
-          : booking
-      )
-    );
+function OwnerDashboard() {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoadingId, setActionLoadingId] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBookings = async () => {
+      try {
+        const result = await getOwnerBookingInquiries();
+
+        if (isMounted) {
+          setBookings(result.data || []);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(
+            err.response?.data?.message || "Failed to fetch booking inquiries"
+          );
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadBookings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const updateBookingStatus = async (id, status) => {
+    try {
+      setActionLoadingId(id);
+      setError("");
+
+      const result = await updateBookingInquiryStatus(id, status);
+
+      setBookings((prevBookings) =>
+        prevBookings.map((booking) =>
+          booking._id === id ? result.data : booking
+        )
+      );
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to update booking status"
+      );
+    } finally {
+      setActionLoadingId("");
+    }
   };
 
-  const total = bookings.length;
-  const accepted = bookings.filter(
-    (b) => b.status === "Accepted"
-  ).length;
-  const pending = bookings.filter(
-    (b) => b.status === "Pending"
-  ).length;
-  const rejected = bookings.filter(
-    (b) => b.status === "Rejected"
-  ).length;
+  const stats = useMemo(() => {
+    const total = bookings.length;
+    const accepted = bookings.filter((b) => b.status === "accepted").length;
+    const pending = bookings.filter((b) => b.status === "pending").length;
+    const rejected = bookings.filter((b) => b.status === "rejected").length;
+
+    return {
+      total,
+      accepted,
+      pending,
+      rejected,
+    };
+  }, [bookings]);
+
+  const formatStatus = (status) => {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#faf7f5] flex items-center justify-center">
+        <p className="text-gray-600 text-lg">Loading owner dashboard...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#faf7f5] p-8">
-      {/* Heading */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-[#4a1625]">
           Owner Dashboard
@@ -64,16 +105,19 @@ function OwnerDashboard() {
         </p>
       </div>
 
-      {/* Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {error && (
+        <div className="mb-6 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-red-700">
+          {error}
+        </div>
+      )}
 
-        {/* Total */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-2xl shadow-md p-6 border border-blue-100">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-gray-500">Total Bookings</p>
+              <p className="text-gray-500">Total Inquiries</p>
               <h2 className="text-3xl font-bold text-blue-600 mt-2">
-                {total}
+                {stats.total}
               </h2>
             </div>
 
@@ -83,13 +127,12 @@ function OwnerDashboard() {
           </div>
         </div>
 
-        {/* Accepted */}
         <div className="bg-white rounded-2xl shadow-md p-6 border border-green-100">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500">Accepted</p>
               <h2 className="text-3xl font-bold text-green-600 mt-2">
-                {accepted}
+                {stats.accepted}
               </h2>
             </div>
 
@@ -99,13 +142,12 @@ function OwnerDashboard() {
           </div>
         </div>
 
-        {/* Pending */}
         <div className="bg-white rounded-2xl shadow-md p-6 border border-yellow-100">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500">Pending</p>
               <h2 className="text-3xl font-bold text-yellow-600 mt-2">
-                {pending}
+                {stats.pending}
               </h2>
             </div>
 
@@ -115,13 +157,12 @@ function OwnerDashboard() {
           </div>
         </div>
 
-        {/* Rejected */}
         <div className="bg-white rounded-2xl shadow-md p-6 border border-red-100">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-gray-500">Rejected</p>
               <h2 className="text-3xl font-bold text-red-600 mt-2">
-                {rejected}
+                {stats.rejected}
               </h2>
             </div>
 
@@ -132,93 +173,103 @@ function OwnerDashboard() {
         </div>
       </div>
 
-      {/* Recent Bookings */}
       <div className="bg-white rounded-2xl shadow-md mt-10 p-6">
         <h2 className="text-2xl font-semibold text-[#4a1625] mb-6">
           Recent Booking Requests
         </h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b">
-              <tr className="text-left text-gray-600">
-                <th className="py-3">Customer</th>
-                <th>Venue</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {bookings.map((booking) => (
-                <tr
-                  key={booking.id}
-                  className="border-b hover:bg-gray-50"
-                >
-                  <td className="py-4">{booking.customer}</td>
-                  <td>{booking.venue}</td>
-                  <td>{booking.date}</td>
-
-                  <td>
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        booking.status === "Accepted"
-                          ? "bg-green-100 text-green-700"
-                          : booking.status === "Rejected"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {booking.status}
-                    </span>
-                  </td>
-
-                  <td>
-                    {booking.status === "Pending" ? (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() =>
-                            updateBookingStatus(
-                              booking.id,
-                              "Accepted"
-                            )
-                          }
-                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
-                        >
-                          Accept
-                        </button>
-
-                        <button
-                          onClick={() =>
-                            updateBookingStatus(
-                              booking.id,
-                              "Rejected"
-                            )
-                          }
-                          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
-                        onClick={() =>
-                          alert(
-                            `Booking Details\n\nCustomer: ${booking.customer}\nVenue: ${booking.venue}\nDate: ${booking.date}\nStatus: ${booking.status}`
-                          )
-                        }
-                      >
-                        View
-                      </button>
-                    )}
-                  </td>
+        {bookings.length === 0 ? (
+          <p className="text-gray-500">No booking inquiries found.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="border-b">
+                <tr className="text-left text-gray-600">
+                  <th className="py-3">Customer</th>
+                  <th>Venue</th>
+                  <th>Date</th>
+                  <th>Guests</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+
+              <tbody>
+                {bookings.map((booking) => (
+                  <tr
+                    key={booking._id}
+                    className="border-b hover:bg-gray-50"
+                  >
+                    <td className="py-4">
+                      <div>
+                        <p className="font-medium">{booking.customerName}</p>
+                        <p className="text-sm text-gray-500">
+                          {booking.customerPhone}
+                        </p>
+                      </div>
+                    </td>
+
+                    <td>{booking.venue?.name || "Venue unavailable"}</td>
+
+                    <td>{booking.eventDate}</td>
+
+                    <td>{booking.guestCount}</td>
+
+                    <td>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${booking.status === "accepted"
+                          ? "bg-green-100 text-green-700"
+                          : booking.status === "rejected"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
+                          }`}
+                      >
+                        {formatStatus(booking.status)}
+                      </span>
+                    </td>
+
+                    <td>
+                      {booking.status === "pending" ? (
+                        <div className="flex gap-2">
+                          <button
+                            disabled={actionLoadingId === booking._id}
+                            onClick={() =>
+                              updateBookingStatus(booking._id, "accepted")
+                            }
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition disabled:opacity-60"
+                          >
+                            Accept
+                          </button>
+
+                          <button
+                            disabled={actionLoadingId === booking._id}
+                            onClick={() =>
+                              updateBookingStatus(booking._id, "rejected")
+                            }
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition disabled:opacity-60"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"
+                          onClick={() =>
+                            alert(
+                              `Booking Details\n\nCustomer: ${booking.customerName}\nPhone: ${booking.customerPhone}\nEmail: ${booking.customerEmail || "N/A"}\nVenue: ${booking.venue?.name || "N/A"}\nDate: ${booking.eventDate}\nGuests: ${booking.guestCount}\nStatus: ${formatStatus(booking.status)}\nMessage: ${booking.message || "N/A"}`
+                            )
+                          }
+                        >
+                          View
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,20 +1,26 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-  const user = {
-    isLoggedIn: true,
-    role: "owner",
-  };
+function ProtectedRoute({ allowedRoles }) {
+  const { user, authLoading } = useAuth();
 
-  if (!user.isLoggedIn) {
-    return <Navigate to="/login" />;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#faf7f5]">
+        <p className="text-gray-600 text-lg">Checking authentication...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" />;
+    return <Navigate to="/home" replace />;
   }
 
-  return children;
-};
+  return <Outlet />;
+}
 
 export default ProtectedRoute;
