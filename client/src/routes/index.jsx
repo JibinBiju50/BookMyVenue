@@ -10,6 +10,8 @@ import OwnerDashboard from "../pages/OwnerDashboard";
 import AdminDashboard from "../pages/AdminDashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
 import OwnerVenueCreate from "../pages/ownerVenueCreate";
+import OwnerVenues from "../pages/ownerVenues";
+import OwnerVenueEdit from "../pages/OwnerVenueEdit";
 
 const router = createBrowserRouter([
     {
@@ -32,11 +34,16 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "owner/venues",
+                        element: <OwnerVenues />
                         
                     },
                     {
                         path: "owner/venues/new",
                         element: <OwnerVenueCreate />
+                    },
+                    {
+                        path: "owner/venues/:id/edit",
+                        element: <OwnerVenueEdit />
                     }
                 ]
             },

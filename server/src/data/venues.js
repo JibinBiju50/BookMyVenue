@@ -10,11 +10,8 @@ const venues = [
     location: {
       type: "Point",
       coordinates: [76.2673, 9.9312], // [longitude, latitude]
-    },
-    capacity: {
-      min: 100,
-      max: 1000,
-    },
+    },   
+    capacity: 400,
     pricing: {
       basePrice: 85000,
       currency: "INR",
@@ -40,15 +37,12 @@ const venues = [
     category: "auditorium",
     district: "Thiruvananthapuram",
     town: "Thiruvananthapuram",
-    address: "Pattom, Thiruvananthapuram, Kerala",
+    address: "Pattom, Thiruvananthapuram, Kerala", 
     location: {
       type: "Point",
       coordinates: [76.9366, 8.5241],
     },
-    capacity: {
-      min: 150,
-      max: 900,
-    },
+    capacity: 600,
     pricing: {
       basePrice: 70000,
       currency: "INR",
@@ -79,10 +73,7 @@ const venues = [
       type: "Point",
       coordinates: [75.7804, 11.2588],
     },
-    capacity: {
-      min: 50,
-      max: 400,
-    },
+    capacity: 400,
     pricing: {
       basePrice: 45000,
       currency: "INR",
@@ -113,10 +104,7 @@ const venues = [
       type: "Point",
       coordinates: [76.2144, 10.5276],
     },
-    capacity: {
-      min: 100,
-      max: 700,
-    },
+    capacity: 700,
     pricing: {
       basePrice: 60000,
       currency: "INR",
@@ -143,14 +131,12 @@ const venues = [
     district: "Kottayam",
     town: "Kumarakom",
     address: "Kumarakom, Kottayam, Kerala",
+    
     location: {
       type: "Point",
       coordinates: [76.4292, 9.6175],
     },
-    capacity: {
-      min: 80,
-      max: 500,
-    },
+    capacity: 100,
     pricing: {
       basePrice: 95000,
       currency: "INR",
@@ -181,10 +167,7 @@ const venues = [
       type: "Point",
       coordinates: [76.3388, 9.4981],
     },
-    capacity: {
-      min: 50,
-      max: 350,
-    },
+    capacity: 100,
     pricing: {
       basePrice: 50000,
       currency: "INR",
@@ -215,10 +198,7 @@ const venues = [
       type: "Point",
       coordinates: [76.6141, 8.8932],
     },
-    capacity: {
-      min: 30,
-      max: 250,
-    },
+    capacity: 200,
     pricing: {
       basePrice: 25000,
       currency: "INR",
@@ -249,10 +229,7 @@ const venues = [
       type: "Point",
       coordinates: [76.6548, 10.7867],
     },
-    capacity: {
-      min: 40,
-      max: 300,
-    },
+    capacity: 150,
     pricing: {
       basePrice: 35000,
       currency: "INR",
@@ -283,10 +260,7 @@ const venues = [
       type: "Point",
       coordinates: [75.3704, 11.8745],
     },
-    capacity: {
-      min: 30,
-      max: 180,
-    },
+    capacity: 180,
     pricing: {
       basePrice: 30000,
       currency: "INR",
@@ -317,10 +291,7 @@ const venues = [
       type: "Point",
       coordinates: [76.074, 11.051],
     },
-    capacity: {
-      min: 100,
-      max: 750,
-    },
+    capacity: "750",
     pricing: {
       basePrice: 55000,
       currency: "INR",
@@ -351,10 +322,7 @@ const venues = [
       type: "Point",
       coordinates: [76.0827, 11.6102],
     },
-    capacity: {
-      min: 40,
-      max: 300,
-    },
+    capacity: 100,
     pricing: {
       basePrice: 65000,
       currency: "INR",
@@ -385,10 +353,7 @@ const venues = [
       type: "Point",
       coordinates: [74.99, 12.4996],
     },
-    capacity: {
-      min: 10,
-      max: 120,
-    },
+    capacity: 250,
     pricing: {
       basePrice: 15000,
       currency: "INR",

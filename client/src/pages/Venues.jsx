@@ -103,7 +103,7 @@ export default function VenuePage() {
                   <div className="flex gap-4 text-gray-500">
                     <div className="flex items-center gap-1">
                       <Users size={16} />
-                      Capacity: {venue.capacity?.min} - {venue.capacity?.max}
+                      Capacity: Up to {venue.capacity} Guests
                     </div>
 
                     <Wifi size={16} />

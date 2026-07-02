@@ -163,7 +163,7 @@ function VenueDetails() {
             <div className="mt-8 space-y-5">
               <div className="flex items-center gap-3">
                 <Users className="text-red-700" />
-                Capacity: {venue.capacity?.min} - {venue.capacity?.max} Guests
+                Capacity: Up to {venue.capacity} Guests
               </div>
 
               {venue.contactInfo?.phone && (

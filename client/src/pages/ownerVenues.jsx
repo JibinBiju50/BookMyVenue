@@ -106,13 +106,12 @@ function OwnerVenues() {
                     </h2>
 
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        venue.status === "approved"
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${venue.status === "approved"
                           ? "bg-green-100 text-green-700"
                           : venue.status === "rejected"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
+                        }`}
                     >
                       {formatStatus(venue.status)}
                     </span>
@@ -131,9 +130,28 @@ function OwnerVenues() {
                   </p>
 
                   <p className="text-gray-500 mt-2">
-                    Capacity: {venue.capacity?.min} - {venue.capacity?.max}
+                    Capacity: Up to {venue.capacity} Guests
                   </p>
+
+                  <div className="mt-5 flex gap-3">
+                  <Link
+                    to={`/owner/venues/${venue._id}/edit`}
+                    className="flex-1 text-center px-4 py-2 rounded-xl bg-[#8b1e2d] text-white hover:bg-[#6f1824] transition"
+                  >
+                    Edit
+                  </Link>
+
+                  {venue.status === "approved" && (
+                    <Link
+                      to={`/venues/${venue._id}`}
+                      className="flex-1 text-center px-4 py-2 rounded-xl border border-[#8b1e2d] text-[#8b1e2d] hover:bg-red-50 transition"
+                    >
+                      View Public
+                    </Link>
+                  )}
                 </div>
+                </div>
+                
               </div>
             ))}
           </div>

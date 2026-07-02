@@ -42,6 +42,14 @@ export const createBookingInquiryService = async (data) => {
     throw error;
   }
 
+  if (Number(guestCount) > venue.capacity) {
+    const error = new Error(
+      `Guest count exceeds venue capacity of ${venue.capacity}`
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
   const alreadyBooked = await BookingInquiry.findOne({
     venue: venue._id,
     eventDate,

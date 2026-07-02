@@ -92,7 +92,7 @@ const buildVenueFilter = async (query = {}) => {
       throw error;
     }
 
-    filter["capacity.max"] = {
+    filter.capacity = {
       $gte: capacityNumber,
     };
   }

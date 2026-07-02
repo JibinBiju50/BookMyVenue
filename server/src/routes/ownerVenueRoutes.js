@@ -3,6 +3,8 @@ import express from "express";
 import {
   createOwnerVenue,
   getOwnerVenues,
+  getOwnerVenueById,
+  updateOwnerVenue,
 } from "../controllers/ownerVenueController.js";
 
 import { authenticate } from "../middleware/authMiddleware.js";
@@ -15,5 +17,7 @@ router.use(authorize("owner"));
 
 router.post("/", createOwnerVenue);
 router.get("/", getOwnerVenues);
+router.get("/:id", getOwnerVenueById);
+router.patch("/:id", updateOwnerVenue);
 
 export default router;

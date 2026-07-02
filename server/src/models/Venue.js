@@ -67,16 +67,9 @@ const venueSchema = new mongoose.Schema(
     },
 
     capacity: {
-      min: {
-        type: Number,
-        default: 0,
-        min: [0, "Minimum capacity cannot be negative"],
-      },
-      max: {
-        type: Number,
-        required: [true, "Maximum capacity is required"],
-        min: [1, "Maximum capacity must be at least 1"],
-      },
+      type: Number,
+      required: [true, "Capacity is required"],
+      min: [1, "Capacity must be at least 1"],
     },
 
     pricing: {
