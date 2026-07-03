@@ -81,7 +81,8 @@ export const getOwnerBookingInquiriesService = async (ownerId) => {
   const inquiries = await BookingInquiry.find({
     owner: ownerId,
   })
-    .populate("venue", "name district town images pricing capacity")
+    .populate("venue")
+    .populate("user", "name email role")
     .sort({ createdAt: -1 });
 
   return inquiries;
