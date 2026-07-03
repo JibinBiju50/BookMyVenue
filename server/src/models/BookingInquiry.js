@@ -64,7 +64,14 @@ const bookingInquirySchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
-
+    trackingCode: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      unique: true,
+      sparse: true,
+      index: true,
+    },
     status: {
       type: String,
       enum: ["pending", "accepted", "rejected"],

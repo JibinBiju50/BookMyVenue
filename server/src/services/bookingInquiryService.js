@@ -6,6 +6,11 @@ const isValidDateString = (date) => {
   return /^\d{4}-\d{2}-\d{2}$/.test(date);
 };
 
+const generateTrackingCode = () => {
+  const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `BMV-${randomPart}`;
+};
+
 export const createBookingInquiryService = async (data) => {
   const {
     venueId,
@@ -66,6 +71,7 @@ export const createBookingInquiryService = async (data) => {
     venue: venue._id,
     user: userId,
     owner: venue.owner || null,
+    trackingCode: generateTrackingCode(),
     customerName,
     customerPhone,
     customerEmail,
@@ -134,6 +140,30 @@ export const updateBookingInquiryStatusService = async ({
   inquiry.status = status;
 
   await inquiry.save();
+
+  return inquiry;
+};
+
+export const checkBookingInquiryStatusService = async ({
+  trackingCode,
+  customerPhone,
+}) => {
+  if (!trackingCode || !customerPhone) {
+    const error = new Error("Tracking code and phone number are required");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const inquiry = await BookingInquiry.findOne({
+    trackingCode: trackingCode.trim().toUpperCase(),
+    customerPhone: customerPhone.trim(),
+  }).populate("venue", "name town district images");
+
+  if (!inquiry) {
+    const error = new Error("Booking inquiry not found");
+    error.statusCode = 404;
+    throw error;
+  }
 
   return inquiry;
 };

@@ -2,6 +2,7 @@ import {
   createBookingInquiryService,
   getOwnerBookingInquiriesService,
   updateBookingInquiryStatusService,
+  checkBookingInquiryStatusService
 } from "../services/bookingInquiryService.js";
 
 export const createBookingInquiry = async (req, res) => {
@@ -58,6 +59,22 @@ export const updateBookingInquiryStatus = async (req, res) => {
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Failed to update booking inquiry",
+    });
+  }
+};
+
+export const checkBookingInquiryStatus = async (req, res) => {
+  try {
+    const inquiry = await checkBookingInquiryStatusService(req.body);
+
+    res.status(200).json({
+      success: true,
+      data: inquiry,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to check booking inquiry status",
     });
   }
 };
