@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import RegisterMyVenue from "./pages/RegisterMyVenue";
 import VenueDetails from "./pages/VenueDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CheckStatus from "./pages/CheckStatus";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/venues" element={<Venues />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/venue/:id" element={<VenueDetails />} />
+      <Route path="/check-status" element={<CheckStatus />} />
       {/* Owner Routes */}
       <Route
         path="/owner/dashboard"

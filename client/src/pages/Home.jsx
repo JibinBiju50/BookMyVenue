@@ -22,11 +22,23 @@ function Home() {
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-8 font-medium">
+             <Link
+              to="/"
+              className="text-gray-700 hover:text-[#8b1e2d] transition"
+            >
+             Home
+            </Link>
             <Link
               to="/venues"
               className="text-gray-700 hover:text-[#8b1e2d] transition"
             >
               Venues
+            </Link>
+            <Link
+              to="#"
+              className="text-gray-700 hover:text-[#8b1e2d] transition"
+            >
+              Contact 
             </Link>
 
         
