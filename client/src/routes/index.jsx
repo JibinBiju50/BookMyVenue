@@ -12,7 +12,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import OwnerVenueCreate from "../pages/ownerVenueCreate";
 import OwnerVenues from "../pages/ownerVenues";
 import OwnerVenueEdit from "../pages/OwnerVenueEdit";
-
+import CheckStatus from "../pages/CheckStatus";
 const router = createBrowserRouter([
     {
         path: '/',
@@ -25,6 +25,7 @@ const router = createBrowserRouter([
             { path: "venues/nearby", element: <VenuePage /> },
             { path: "venues/:id", element: <VenueDetails /> },
             { path: "booking/:venueId", element: <BookingInquiry /> },
+            {path: "check-status", element: <CheckStatus />},
             {
                 element: <ProtectedRoute allowedRoles={["owner"]} />,
                 children: [

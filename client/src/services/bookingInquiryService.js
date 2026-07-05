@@ -17,3 +17,12 @@ export const updateBookingInquiryStatus = async (inquiryId, status) => {
 
   return response.data;
 };
+
+export const checkBookingInquiryStatus = async (statusData) => {
+  const response = await apiClient.post(
+    "/booking-inquiries/check-status",
+    statusData
+  );
+
+  return response.data;
+};
