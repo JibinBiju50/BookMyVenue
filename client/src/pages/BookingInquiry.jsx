@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { getVenueById } from "../services/venueService";
 import { createBookingInquiry } from "../services/bookingInquiryService";
@@ -13,6 +13,8 @@ function BookingInquiry() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [trackingCode, setTrackingCode] = useState("");
+  const [copySuccess, setCopySuccess] = useState("");
 
   const [formData, setFormData] = useState({
     customerName: "",
@@ -22,6 +24,14 @@ function BookingInquiry() {
     guestCount: "",
     message: "",
   });
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const timezoneOffset = today.getTimezoneOffset() * 60000;
+    return new Date(today.getTime() - timezoneOffset)
+      .toISOString()
+      .split("T")[0];
+  };
 
   useEffect(() => {
     const fetchVenue = async () => {
@@ -41,6 +51,19 @@ function BookingInquiry() {
     fetchVenue();
   }, [venueId]);
 
+  const handleCopyTrackingCode = async () => {
+    try {
+      await navigator.clipboard.writeText(trackingCode);
+      setCopySuccess("Tracking code copied!");
+
+      setTimeout(() => {
+        setCopySuccess("");
+      }, 2500);
+    } catch {
+      setCopySuccess("Could not copy. Please copy the code manually.");
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -58,12 +81,20 @@ function BookingInquiry() {
       setError("");
       setSuccessMessage("");
 
-      await createBookingInquiry({
+      const result = await createBookingInquiry({
         venueId,
-        ...formData,
+        customerName: formData.customerName,
+        customerPhone: formData.customerPhone,
+        customerEmail: formData.customerEmail,
+        eventDate: formData.eventDate,
+        guestCount: formData.guestCount,
+        message: formData.message,
       });
 
-      setSuccessMessage("Booking inquiry submitted successfully.");
+      const newTrackingCode = result.data.trackingCode;
+
+      setSuccessMessage(result.message || "Booking inquiry submitted successfully.");
+      setTrackingCode(newTrackingCode);
 
       setFormData({
         customerName: "",
@@ -153,9 +184,68 @@ function BookingInquiry() {
                 </div>
               )}
 
-              {successMessage && (
-                <div className="mt-6 rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-green-700">
-                  {successMessage}
+              {successMessage && trackingCode && (
+                <div className="mt-6 rounded-2xl bg-green-50 border border-green-200 p-6">
+                  <h2 className="text-xl font-semibold text-green-700">
+                    Booking Inquiry Submitted Successfully
+                  </h2>
+
+                  <p className="text-gray-600 mt-2">
+                    Your request has been sent to the venue owner. The owner will review your
+                    inquiry and accept or reject it.
+                  </p>
+
+                  <div className="mt-5 bg-white border border-green-200 rounded-xl p-5">
+                    <p className="text-sm text-gray-500">Your Tracking Code</p>
+
+                    <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+                      <p className="text-3xl font-bold text-[#8b1e2d] tracking-wide">
+                        {trackingCode}
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyTrackingCode}
+                        className="px-5 py-2 rounded-xl bg-[#8b1e2d] text-white font-semibold hover:bg-[#6f1824] transition"
+                      >
+                        Copy Code
+                      </button>
+                    </div>
+
+                    {copySuccess && (
+                      <p className="text-sm text-green-700 mt-3">
+                        {copySuccess}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="mt-5 rounded-xl bg-yellow-50 border border-yellow-200 p-4">
+                    <p className="text-yellow-800 font-medium">
+                      Important: Please copy or save this tracking code now.
+                    </p>
+
+                    <p className="text-gray-600 mt-2">
+                      You will need this tracking code and your phone number to check your
+                      booking status later. If you leave this page without saving it, you may
+                      not be able to retrieve it again.
+                    </p>
+                  </div>
+
+                  <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                    <Link
+                      to="/check-status"
+                      className="text-center px-6 py-3 rounded-xl bg-[#8b1e2d] text-white font-semibold hover:bg-[#6f1824] transition"
+                    >
+                      Check Booking Status
+                    </Link>
+
+                    <Link
+                      to="/venues"
+                      className="text-center px-6 py-3 rounded-xl border border-[#8b1e2d] text-[#8b1e2d] font-semibold hover:bg-red-50 transition"
+                    >
+                      Browse More Venues
+                    </Link>
+                  </div>
                 </div>
               )}
 
@@ -213,6 +303,7 @@ function BookingInquiry() {
                     name="eventDate"
                     value={formData.eventDate}
                     onChange={handleChange}
+                    min={getTodayDate()}
                     required
                     className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
                   />

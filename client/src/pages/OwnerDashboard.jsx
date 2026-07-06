@@ -103,6 +103,7 @@ function OwnerDashboard() {
   const getStatusClass = (status) => {
     if (status === "accepted") return "bg-green-100 text-green-700";
     if (status === "rejected") return "bg-red-100 text-red-700";
+    if (status === "cancelled") return "bg-gray-200 text-gray-700";
     return "bg-yellow-100 text-yellow-700";
   };
 
@@ -556,7 +557,7 @@ function OwnerDashboard() {
                       <strong>Pricing Model:</strong>{" "}
                       {formatPricingModel(
                         selectedBooking.venue?.pricing?.pricingModel ||
-                          "per_day"
+                        "per_day"
                       )}
                     </p>
                   </div>

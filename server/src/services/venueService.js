@@ -17,6 +17,13 @@ const isValidDateString = (date) => {
   return /^\d{4}-\d{2}-\d{2}$/.test(date);
 };
 
+const isPastDate = (dateString) => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+
+  return dateString < todayString;
+};
+
 /**
  * Finds venue IDs that are already booked for a selected event date.
  */
@@ -29,12 +36,49 @@ const getBookedVenueIdsByDate = async (eventDate) => {
     throw error;
   }
 
+  if (isPastDate(eventDate)) {
+    const error = new Error("Event date cannot be in the past");
+    error.statusCode = 400;
+    throw error;
+  }
+
   const bookedInquiries = await BookingInquiry.find({
     eventDate,
     status: "accepted",
   }).select("venue");
 
   return bookedInquiries.map((inquiry) => inquiry.venue);
+};
+
+const addAvailabilityToVenues = async (venues, eventDate) => {
+  if (!eventDate) {
+    return venues;
+  }
+
+  const bookedVenueIds = await getBookedVenueIdsByDate(eventDate);
+
+  const bookedVenueIdSet = new Set(
+    bookedVenueIds.map((id) => id.toString())
+  );
+
+  const venuesWithAvailability = venues.map((venue) => {
+    const venueObject =
+      typeof venue.toObject === "function" ? venue.toObject() : venue;
+
+    const isBooked = bookedVenueIdSet.has(venueObject._id.toString());
+
+    return {
+      ...venueObject,
+      isBooked,
+      isAvailable: !isBooked,
+    };
+  });
+
+  venuesWithAvailability.sort((a, b) => {
+    return Number(a.isBooked) - Number(b.isBooked);
+  });
+
+  return venuesWithAvailability;
 };
 
 /**
@@ -122,16 +166,6 @@ const buildVenueFilter = async (query = {}) => {
     ];
   }
 
-  if (eventDate) {
-    const bookedVenueIds = await getBookedVenueIdsByDate(eventDate);
-
-    if (bookedVenueIds.length > 0) {
-      filter._id = {
-        $nin: bookedVenueIds,
-      };
-    }
-  }
-
   return filter;
 };
 
@@ -144,7 +178,7 @@ export const getAvailableVenuesService = async (query = {}) => {
 
   const venues = await Venue.find(filter).sort({ createdAt: -1 });
 
-  return venues;
+  return addAvailabilityToVenues(venues, query.eventDate);
 };
 /**
  * Get one approved active venue by ID.
@@ -235,5 +269,5 @@ export const getNearbyVenuesService = async (query = {}) => {
     },
   ]);
 
-  return venues;
+   return addAvailabilityToVenues(venues, query.eventDate);
 };

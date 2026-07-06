@@ -4,7 +4,8 @@ import {
   createBookingInquiry,
   getOwnerBookingInquiries,
   updateBookingInquiryStatus,
-  checkBookingInquiryStatus
+  checkBookingInquiryStatus,
+  cancelBookingInquiry
 } from "../controllers/bookingInquiryController.js";
 
 import { authenticate } from "../middleware/authMiddleware.js";
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.post("/", createBookingInquiry);
 router.post("/check-status", checkBookingInquiryStatus);
+router.patch("/cancel", cancelBookingInquiry);
 
 router.get(
   "/owner",

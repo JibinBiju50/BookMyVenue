@@ -11,6 +11,13 @@ const generateTrackingCode = () => {
   return `BMV-${randomPart}`;
 };
 
+const isPastDate = (dateString) => {
+  const today = new Date();
+  const todayString = today.toISOString().split("T")[0];
+
+  return dateString < todayString;
+};
+
 export const createBookingInquiryService = async (data) => {
   const {
     venueId,
@@ -31,6 +38,11 @@ export const createBookingInquiryService = async (data) => {
 
   if (!eventDate || !isValidDateString(eventDate)) {
     const error = new Error("Event date must be in YYYY-MM-DD format");
+    error.statusCode = 400;
+    throw error;
+  }
+  if (isPastDate(eventDate)) {
+    const error = new Error("Event date cannot be in the past");
     error.statusCode = 400;
     throw error;
   }
@@ -122,6 +134,14 @@ export const updateBookingInquiryStatusService = async ({
     throw error;
   }
 
+  if (inquiry.status !== "pending") {
+    const error = new Error(
+      "Only pending booking inquiries can be accepted or rejected"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
   if (status === "accepted") {
     const existingAcceptedInquiry = await BookingInquiry.findOne({
       _id: { $ne: inquiry._id },
@@ -164,6 +184,39 @@ export const checkBookingInquiryStatusService = async ({
     error.statusCode = 404;
     throw error;
   }
+
+  return inquiry;
+};
+
+export const cancelBookingInquiryService = async ({
+  trackingCode,
+  customerPhone,
+}) => {
+  if (!trackingCode || !customerPhone) {
+    const error = new Error("Tracking code and phone number are required");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const inquiry = await BookingInquiry.findOne({
+    trackingCode: trackingCode.trim().toUpperCase(),
+    customerPhone: customerPhone.trim(),
+  }).populate("venue", "name town district images");
+
+  if (!inquiry) {
+    const error = new Error("Booking inquiry not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  if (inquiry.status !== "pending") {
+    const error = new Error("Only pending booking inquiries can be cancelled");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  inquiry.status = "cancelled";
+  await inquiry.save();
 
   return inquiry;
 };

@@ -26,3 +26,12 @@ export const checkBookingInquiryStatus = async (statusData) => {
 
   return response.data;
 };
+
+export const cancelBookingInquiry = async (cancelData) => {
+  const response = await apiClient.patch(
+    "/booking-inquiries/cancel",
+    cancelData
+  );
+
+  return response.data;
+};

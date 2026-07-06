@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { checkBookingInquiryStatus } from "../services/bookingInquiryService";
+import { checkBookingInquiryStatus, cancelBookingInquiry } from "../services/bookingInquiryService";
 
 export default function CheckStatus() {
   const [formData, setFormData] = useState({
@@ -12,11 +12,14 @@ export default function CheckStatus() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false)
 
   const statusStyles = {
     pending: "bg-yellow-100 text-yellow-700",
     accepted: "bg-green-100 text-green-700",
     rejected: "bg-red-100 text-red-700",
+    cancelled: "bg-gray-200 text-gray-700",
   };
 
   const formatStatus = (status = "") => {
@@ -30,6 +33,31 @@ export default function CheckStatus() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleCancelInquiry = () => {
+    setShowCancelConfirm(true);
+  };
+
+  const confirmCancelInquiry = async () => {
+    try {
+      setCancelLoading(true);
+      setError("");
+
+      const result = await cancelBookingInquiry({
+        trackingCode: booking.trackingCode,
+        customerPhone: booking.customerPhone,
+      });
+
+      setBooking(result.data);
+      setShowCancelConfirm(false);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to cancel booking inquiry"
+      );
+    } finally {
+      setCancelLoading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -55,7 +83,7 @@ export default function CheckStatus() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Unable to find booking inquiry. Please check your details."
+        "Unable to find booking inquiry. Please check your details."
       );
     } finally {
       setLoading(false);
@@ -218,9 +246,8 @@ export default function CheckStatus() {
                 <span className="font-medium text-gray-600">Status</span>
 
                 <span
-                  className={`px-4 py-2 rounded-full font-semibold ${
-                    statusStyles[booking.status]
-                  }`}
+                  className={`px-4 py-2 rounded-full font-semibold ${statusStyles[booking.status]
+                    }`}
                 >
                   {formatStatus(booking.status)}
                 </span>
@@ -241,6 +268,17 @@ export default function CheckStatus() {
                 </div>
               )}
 
+              {booking.status === "pending" && (
+                <button
+                  type="button"
+                  onClick={handleCancelInquiry}
+                  disabled={cancelLoading}
+                  className="mt-4 w-full border border-red-600 text-red-600 py-3 rounded-xl font-semibold hover:bg-red-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  Cancel Inquiry
+                </button>
+              )}
+
               {booking.status === "accepted" && (
                 <div className="bg-green-50 border border-green-300 rounded-xl p-4">
                   <h3 className="font-semibold text-green-700">
@@ -255,15 +293,15 @@ export default function CheckStatus() {
                 </div>
               )}
 
-              {booking.status === "rejected" && (
-                <div className="bg-red-50 border border-red-300 rounded-xl p-4">
-                  <h3 className="font-semibold text-red-700">
-                    Booking Rejected
+              {booking.status === "cancelled" && (
+                <div className="bg-gray-50 border border-gray-300 rounded-xl p-4">
+                  <h3 className="font-semibold text-gray-700">
+                    Booking Inquiry Cancelled
                   </h3>
 
                   <p className="text-gray-600 mt-2">
-                    Unfortunately, your booking request was rejected by the venue
-                    owner. You can browse other venues and submit a new inquiry.
+                    You cancelled this booking inquiry. The venue owner can no longer accept
+                    or reject this request.
                   </p>
 
                   <Link
@@ -303,15 +341,19 @@ export default function CheckStatus() {
                     booking.status === "accepted"
                       ? "text-green-600"
                       : booking.status === "rejected"
-                      ? "text-red-600"
-                      : "text-gray-400"
+                        ? "text-red-600"
+                        : booking.status === "cancelled"
+                          ? "text-gray-600"
+                          : "text-gray-400"
                   }
                 >
                   {booking.status === "pending"
                     ? "○ Final Decision"
                     : booking.status === "accepted"
-                    ? "✔ Booking Accepted"
-                    : "✖ Booking Rejected"}
+                      ? "✔ Booking Accepted"
+                      : booking.status === "rejected"
+                        ? "✖ Booking Rejected"
+                        : "✖ Inquiry Cancelled"}
                 </div>
               </div>
             </div>
@@ -323,6 +365,70 @@ export default function CheckStatus() {
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+      {showCancelConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => {
+              if (!cancelLoading) {
+                setShowCancelConfirm(false);
+              }
+            }}
+          />
+
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-2xl mx-auto">
+              !
+            </div>
+
+            <h2 className="text-2xl font-bold text-center text-gray-900 mt-5">
+              Cancel Booking Inquiry?
+            </h2>
+
+            <p className="text-gray-600 text-center mt-3 leading-6">
+              Are you sure you want to cancel this booking inquiry? Once cancelled,
+              the venue owner cannot accept this request.
+            </p>
+
+            <div className="mt-5 bg-gray-50 rounded-xl p-4 text-sm text-gray-700">
+              <p>
+                <span className="font-semibold">Tracking Code:</span>{" "}
+                {booking?.trackingCode}
+              </p>
+
+              <p className="mt-1">
+                <span className="font-semibold">Venue:</span>{" "}
+                {booking?.venue?.name || "Venue unavailable"}
+              </p>
+
+              <p className="mt-1">
+                <span className="font-semibold">Event Date:</span>{" "}
+                {booking?.eventDate}
+              </p>
+            </div>
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => setShowCancelConfirm(false)}
+                disabled={cancelLoading}
+                className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition disabled:opacity-60"
+              >
+                Keep Inquiry
+              </button>
+
+              <button
+                type="button"
+                onClick={confirmCancelInquiry}
+                disabled={cancelLoading}
+                className="flex-1 py-3 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {cancelLoading ? "Cancelling..." : "Yes, Cancel"}
+              </button>
+            </div>
           </div>
         </div>
       )}

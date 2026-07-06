@@ -37,6 +37,10 @@ function Navbar() {
             Venues
           </Link>
 
+          <Link to="/check-status" className="text-gray-600 hover:text-[#8b1e2d]">
+            Check Status
+          </Link>
+
           {!authLoading && user?.role === "owner" && (
             <Link
               to="/owner/dashboard"

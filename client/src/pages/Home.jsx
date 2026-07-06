@@ -11,6 +11,13 @@ function Home() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const timezoneOffset = today.getTimezoneOffset() * 60000;
+    return new Date(today.getTime() - timezoneOffset)
+      .toISOString()
+      .split("T")[0];
+  };
 
   const handleManualSearch = (e) => {
     e.preventDefault();
@@ -64,7 +71,7 @@ function Home() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex flex-col items-center text-center">
-          
+
 
           <h1 className="mt-8 text-6xl md:text-8xl font-semibold leading-[1.05] tracking-tight text-gray-900">
             Find the{" "}
@@ -169,6 +176,7 @@ function Home() {
                 type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
+                min={getTodayDate()}
                 className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
               />
             </div>

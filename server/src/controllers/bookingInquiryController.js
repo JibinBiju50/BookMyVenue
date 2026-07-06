@@ -2,7 +2,8 @@ import {
   createBookingInquiryService,
   getOwnerBookingInquiriesService,
   updateBookingInquiryStatusService,
-  checkBookingInquiryStatusService
+  checkBookingInquiryStatusService,
+  cancelBookingInquiryService
 } from "../services/bookingInquiryService.js";
 
 export const createBookingInquiry = async (req, res) => {
@@ -75,6 +76,23 @@ export const checkBookingInquiryStatus = async (req, res) => {
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Failed to check booking inquiry status",
+    });
+  }
+};
+
+export const cancelBookingInquiry = async (req, res) => {
+  try {
+    const inquiry = await cancelBookingInquiryService(req.body);
+
+    res.status(200).json({
+      success: true,
+      message: "Booking inquiry cancelled successfully",
+      data: inquiry,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to cancel booking inquiry",
     });
   }
 };
