@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getTownSuggestions } from "../services/venueService";
 
 function Home() {
   const navigate = useNavigate();
@@ -10,6 +11,51 @@ function Home() {
   const [eventDate, setEventDate] = useState("");
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
+  const [townSuggestions, setTownSuggestions] = useState([]);
+  const [showTownSuggestions, setShowTownSuggestions] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadTownSuggestions = async () => {
+      const keyword = town.trim();
+
+      if (keyword.length < 1) {
+        setTownSuggestions([]);
+        setShowTownSuggestions(false);
+        return;
+      }
+
+      try {
+        const result = await getTownSuggestions({
+          district,
+          keyword,
+        });
+
+        if (isMounted) {
+          setTownSuggestions(result.data || []);
+          setShowTownSuggestions((result.data || []).length > 0);
+        }
+      } catch {
+        if (isMounted) {
+          setTownSuggestions([]);
+          setShowTownSuggestions(false);
+        }
+      }
+    };
+
+    loadTownSuggestions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [district, town]);
+
+  const handleSelectTown = (selectedTown) => {
+    setTown(selectedTown);
+    setTownSuggestions([]);
+    setShowTownSuggestions(false);
+  };
 
   const getTodayDate = () => {
     const today = new Date();
@@ -155,17 +201,46 @@ function Home() {
               </select>
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-600 mb-2">
                 Town/Area
               </label>
+
               <input
                 type="text"
                 placeholder="Town/Area"
                 value={town}
-                onChange={(e) => setTown(e.target.value)}
+                onChange={(e) => {
+                  setTown(e.target.value);
+                  setShowTownSuggestions(true);
+                }}
+                onFocus={() => {
+                  if (town.trim().length > 0 && townSuggestions.length > 0) {
+                    setShowTownSuggestions(true);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setShowTownSuggestions(false);
+                  }, 150);
+                }}
                 className="w-full px-4 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
               />
+
+              {showTownSuggestions && townSuggestions.length > 0 && (
+                <div className="absolute z-30 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto">
+                  {townSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      onMouseDown={() => handleSelectTown(suggestion)}
+                      className="w-full text-left px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-[#8b1e2d] transition"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>

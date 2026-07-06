@@ -1,4 +1,4 @@
-import { getAvailableVenuesService, getNearbyVenuesService, getVenueByIdService } from "../services/venueService.js";
+import { getAvailableVenuesService, getNearbyVenuesService, getVenueByIdService, getTownSuggestionsService } from "../services/venueService.js";
 
 export const getVenues = async (req, res) => {
   try {
@@ -46,6 +46,23 @@ export const getNearbyVenues = async (req, res) => {
     res.status(error.statusCode || 500).json({
       success: false,
       message: error.message || "Failed to fetch nearby venues",
+    });
+  }
+};
+
+export const getTownSuggestions = async (req, res) => {
+  try {
+    const towns = await getTownSuggestionsService(req.query);
+
+    res.status(200).json({
+      success: true,
+      count: towns.length,
+      data: towns,
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Failed to fetch town suggestions",
     });
   }
 };

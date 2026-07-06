@@ -271,3 +271,33 @@ export const getNearbyVenuesService = async (query = {}) => {
 
    return addAvailabilityToVenues(venues, query.eventDate);
 };
+
+export const getTownSuggestionsService = async (query = {}) => {
+  const { district, keyword } = query;
+
+  const filter = {
+    status: "approved",
+    isActive: true,
+  };
+
+  if (district) {
+    filter.district = {
+      $regex: `^${escapeRegex(district)}$`,
+      $options: "i",
+    };
+  }
+
+  if (keyword) {
+    filter.town = {
+      $regex: escapeRegex(keyword),
+      $options: "i",
+    };
+  }
+
+  const towns = await Venue.distinct("town", filter);
+
+  return towns
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 10);
+};

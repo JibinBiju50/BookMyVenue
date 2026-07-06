@@ -6,7 +6,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 
-import { getNearbyVenues, getVenues } from "../services/venueService";
+import { getNearbyVenues, getVenues, getTownSuggestions } from "../services/venueService";
 
 function VenuePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +25,55 @@ function VenuePage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [townSuggestions, setTownSuggestions] = useState([]);
+  const [showTownSuggestions, setShowTownSuggestions] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadTownSuggestions = async () => {
+      const keyword = filters.town.trim();
+
+      if (keyword.length < 1) {
+        setTownSuggestions([]);
+        setShowTownSuggestions(false);
+        return;
+      }
+
+      try {
+        const result = await getTownSuggestions({
+          district: filters.district,
+          keyword,
+        });
+
+        if (isMounted) {
+          setTownSuggestions(result.data || []);
+          setShowTownSuggestions((result.data || []).length > 0);
+        }
+      } catch {
+        if (isMounted) {
+          setTownSuggestions([]);
+          setShowTownSuggestions(false);
+        }
+      }
+    };
+
+    loadTownSuggestions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [filters.district, filters.town]);
+
+  const handleSelectTown = (selectedTown) => {
+    setFilters((prev) => ({
+      ...prev,
+      town: selectedTown,
+    }));
+
+    setTownSuggestions([]);
+    setShowTownSuggestions(false);
+  };
 
   const isNearbySearch =
     location.pathname.includes("/nearby") &&
@@ -178,7 +227,7 @@ function VenuePage() {
                 </select>
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-600 mb-2">
                   Town / Area
                 </label>
@@ -187,10 +236,38 @@ function VenuePage() {
                   type="text"
                   name="town"
                   value={filters.town}
-                  onChange={handleFilterChange}
+                  onChange={(e) => {
+                    handleFilterChange(e);
+                    setShowTownSuggestions(true);
+                  }}
+                  onFocus={() => {
+                    if (filters.town.trim().length > 0 && townSuggestions.length > 0) {
+                      setShowTownSuggestions(true);
+                    }
+                  }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      setShowTownSuggestions(false);
+                    }, 150);
+                  }}
                   placeholder="Example: Kochi"
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
                 />
+
+                {showTownSuggestions && townSuggestions.length > 0 && (
+                  <div className="absolute z-30 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto">
+                    {townSuggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onMouseDown={() => handleSelectTown(suggestion)}
+                        className="w-full text-left px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-[#8b1e2d] transition"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -296,9 +373,8 @@ function VenuePage() {
                 <p className="text-gray-500 mt-1">
                   {loading
                     ? "Loading venues..."
-                    : `${venues.length} venue${
-                        venues.length === 1 ? "" : "s"
-                      } found`}
+                    : `${venues.length} venue${venues.length === 1 ? "" : "s"
+                    } found`}
                 </p>
               </div>
 
@@ -342,11 +418,10 @@ function VenuePage() {
                 {venues.map((venue) => (
                   <div
                     key={venue._id}
-                    className={`relative bg-white rounded-2xl shadow overflow-hidden transition ${
-                      venue.isBooked
-                        ? "grayscale opacity-60 cursor-not-allowed"
-                        : "hover:shadow-xl"
-                    }`}
+                    className={`relative bg-white rounded-2xl shadow overflow-hidden transition ${venue.isBooked
+                      ? "grayscale opacity-60 cursor-not-allowed"
+                      : "hover:shadow-xl"
+                      }`}
                   >
                     <div className="relative">
                       <img

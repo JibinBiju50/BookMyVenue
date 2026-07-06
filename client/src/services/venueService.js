@@ -21,3 +21,11 @@ export const getNearbyVenues = async (filters = {}) => {
 
   return response.data;
 };
+
+export const getTownSuggestions = async (filters = {}) => {
+  const response = await apiClient.get("/venues/town-suggestions", {
+    params: filters,
+  });
+
+  return response.data;
+};
