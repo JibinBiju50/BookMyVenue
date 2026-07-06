@@ -10,7 +10,8 @@
     "seed:admin": "node src/seed/seedAdmin.js",
     "seed:venues": "node src/utils/seedVenues.js",
     "migrate:capacity": "node src/utils/migrateCapacityToNumber.js",
-    "migrate:booking-tracking": "node src/utils/migrateBookingInquiryTrackingCode.js"
+    "migrate:booking-tracking": "node src/utils/migrateBookingInquiryTrackingCode.js",
+    "migrate:assign-specific-owners": "node src/utils/assignSpecificVenuesToOwners.js"
   },
   "keywords": [],
   "author": "",

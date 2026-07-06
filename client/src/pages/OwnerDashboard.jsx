@@ -583,7 +583,8 @@ function OwnerDashboard() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                {selectedBooking.status === "pending" && (
+                  <div className="flex gap-3">
                   <button
                     type="button"
                     disabled={
@@ -612,6 +613,7 @@ function OwnerDashboard() {
                     Reject
                   </button>
                 </div>
+              )}
 
                 {selectedBooking.status === "accepted" && (
                   <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">
