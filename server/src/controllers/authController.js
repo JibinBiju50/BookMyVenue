@@ -2,22 +2,20 @@ import User from "../models/User.js";
 import { loginUser, refreshAccessToken, registerUser } from "../services/authService.js";
 import { generateAccessToken, generateRefreshToken } from "../services/tokenService.js";
 
-const isProduction = process.env.NODE_ENV === "production";
+const COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE || (process.env.NODE_ENV === 'production' ? 'none' : 'lax');
 
 const accessTokenCookieOptions = {
   httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "none" : "lax",
-  path: "/",
-  maxAge: 15 * 60 * 1000,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: COOKIE_SAME_SITE,
+  maxAge: 15 * 60 * 1000 
 };
 
 const refreshTokenCookieOptions = {
   httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "none" : "lax",
-  path: "/",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: COOKIE_SAME_SITE,
+  maxAge: 7 * 24 * 60 * 60 * 1000 
 };
 
 export const register = async (req, res) => {
