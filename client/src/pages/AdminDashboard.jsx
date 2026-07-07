@@ -16,8 +16,10 @@ import {
   getAdminVenues,
   updateVenueApprovalStatus,
 } from "../services/adminVenueService.js";
+import { usePageTitle } from "../hooks/usePageTitle.js";
 
 function AdminDashboard() {
+  usePageTitle("Admin Dashboard")
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [loading, setLoading] = useState(true);

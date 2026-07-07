@@ -7,8 +7,10 @@ import {
 } from "../services/ownerVenueService";
 
 import { uploadVenueImages } from "../services/uploadService";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 function OwnerVenueEdit() {
+  usePageTitle("Update Venue");
   const { id } = useParams();
   const navigate = useNavigate();
 

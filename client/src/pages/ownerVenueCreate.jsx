@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { uploadVenueImages } from "../services/uploadService.js";
 import { createOwnerVenue } from "../services/ownerVenueService.js";
+import { usePageTitle } from "../hooks/usePageTitle.js";
 
 function OwnerVenueCreate() {
+    usePageTitle("Submit Venue");
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({

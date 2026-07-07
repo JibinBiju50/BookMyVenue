@@ -20,7 +20,10 @@ import {
   updateBookingInquiryStatus,
 } from "../services/bookingInquiryService.js";
 
+import { usePageTitle } from "../hooks/usePageTitle.js";
+
 function OwnerDashboard() {
+  usePageTitle("Owner Dashboard")
   const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [loading, setLoading] = useState(true);

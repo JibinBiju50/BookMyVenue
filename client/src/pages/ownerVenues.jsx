@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { getOwnerVenues } from "../services/ownerVenueService";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 function OwnerVenues() {
+  usePageTitle("My Venues");
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

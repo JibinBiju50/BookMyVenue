@@ -3,8 +3,10 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 
 import { getVenueById } from "../services/venueService";
 import { createBookingInquiry } from "../services/bookingInquiryService";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 function BookingInquiry() {
+  usePageTitle("Submit Booking Inquiry");
   const { venueId } = useParams();
   const navigate = useNavigate();
 

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { getVenueById } from "../services/venueService.js";
+import { usePageTitle } from "../hooks/usePageTitle.js";
 
 function VenueDetails() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ function VenueDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  usePageTitle(venue ? venue.name : "Venue Details");
   useEffect(() => {
     const fetchVenue = async () => {
       try {

@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getTownSuggestions } from "../services/venueService";
-
+import { usePageTitle } from "../hooks/usePageTitle";
 function Home() {
+  usePageTitle("Home");
   const navigate = useNavigate();
 
   const [district, setDistrict] = useState("");

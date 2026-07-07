@@ -7,8 +7,10 @@ import {
 } from "react-router-dom";
 
 import { getNearbyVenues, getVenues, getTownSuggestions } from "../services/venueService";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 function VenuePage() {
+  usePageTitle("Explore Venues")
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -207,7 +209,9 @@ function VenuePage() {
               Filters
             </h2>
 
-            <form onSubmit={handleApplyFilters} className="mt-6 space-y-5">
+            <form onSubmit={handleApplyFilters}
+            autoComplete="off" 
+            className="mt-6 space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-2">
                   District
@@ -219,11 +223,21 @@ function VenuePage() {
                   onChange={handleFilterChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
                 >
-                  <option value="">All Districts</option>
-                  <option value="Ernakulam">Ernakulam</option>
-                  <option value="Kottayam">Kottayam</option>
-                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="" disabled selected>Select district</option>
                   <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                  <option value="Ernakulam">Kollam</option>
+                  <option value="Pathanamthitta">Pathanamthitta</option>
+                  <option value="Alappuzha">Alappuzha</option>
+                  <option value="Kottayam">Kottayam</option>
+                  <option value="Idukki">Idukki</option>
+                  <option value="Ernakulam">Ernakulam</option>
+                  <option value="Thrissur">Thrissur</option>
+                  <option value="Palakkad">Palakkad</option>
+                  <option value="Malappuram">Malappuram</option>
+                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="Wayanad">Wayanad</option>
+                  <option value="Kannur">Kannur</option>
+                  <option value="Kasaragod">Kasaragod</option>
                 </select>
               </div>
 

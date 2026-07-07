@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { checkBookingInquiryStatus, cancelBookingInquiry } from "../services/bookingInquiryService";
-
+import { usePageTitle } from "../hooks/usePageTitle";
 export default function CheckStatus() {
+  usePageTitle("Check Booking Status");
   const [formData, setFormData] = useState({
     trackingCode: "",
     customerPhone: "",

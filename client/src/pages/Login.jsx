@@ -3,8 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
-
+import { usePageTitle } from "../hooks/usePageTitle";
 function Login() {
+  usePageTitle("Login");
   const navigate = useNavigate();
   const { login, getDashboardPathByRole } = useAuth();
 
