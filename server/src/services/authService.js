@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import { generateAccessToken, verifyRefreshToken, generateRefreshToken } from "./TokenService.js";
+import { generateAccessToken, verifyRefreshToken, generateRefreshToken } from "./tokenService.js";
 import bcrypt from 'bcryptjs'
 
 const allowedRoles = ["user", "owner"]
