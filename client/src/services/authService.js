@@ -22,11 +22,6 @@ export const loginUser = async (credentials) => {
   };
 };
 
-export const logoutUser = async () => {
-  const response = await apiClient.post("/auth/logout");
-  return response.data;
-};
-
 export const getCurrentUser = async () => {
   const response = await apiClient.get("/auth/me");
 
@@ -35,3 +30,9 @@ export const getCurrentUser = async () => {
     user: extractUser(response.data),
   };
 };
+
+export const logoutUser = async () => {
+  const response = await apiClient.post("/auth/logout");
+  return response.data;
+};
+
