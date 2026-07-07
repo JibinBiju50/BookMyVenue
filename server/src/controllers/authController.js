@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import { loginUser, refreshAccessToken, registerUser } from "../services/authService.js";
-import { generateAccessToken, generateRefreshToken } from "../services/TokenService.js";
+import { generateAccessToken, generateRefreshToken } from "../services/tokenService.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
