@@ -15,11 +15,19 @@ app.set("trust proxy", 1);
 const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
   .map((origin) => origin.trim())
+  .map((origin) => origin.replace(/\/$/, ""))
   .filter(Boolean);
 
 app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    },
+    credentials: true,
+    optionsSuccessStatus: 204
 }));
 
 app.use(express.json());
