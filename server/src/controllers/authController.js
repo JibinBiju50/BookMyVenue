@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const baseCookieOptions = {
   httpOnly: true,
   secure: isProduction,
-  sameSite: "none",
+  sameSite: process.env.COOKIE_SAME_SITE || "lax",
   path: "/",
 };
 
