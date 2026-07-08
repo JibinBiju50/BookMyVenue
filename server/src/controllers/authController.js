@@ -1,16 +1,11 @@
 import { loginUser, refreshAccessToken, registerUser } from "../services/authService.js";
 
 const isProduction = process.env.NODE_ENV === "production";
-const cookieSameSite = process.env.COOKIE_SAME_SITE || (isProduction ? "none" : "lax");
-const cookieSecure = process.env.COOKIE_SECURE
-  ? process.env.COOKIE_SECURE === "true"
-  : isProduction;
 
 const baseCookieOptions = {
   httpOnly: true,
-  secure: cookieSecure,
-  sameSite: cookieSameSite,
-  path: "/",
+  secure: isProduction,
+  sameSite: "lax",
 };
 
 const accessTokenCookieOptions = {

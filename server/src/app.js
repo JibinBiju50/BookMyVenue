@@ -12,15 +12,11 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-const allowedOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || "http://localhost:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
 app.use(cors({
-    origin: allowedOrigins,
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 
