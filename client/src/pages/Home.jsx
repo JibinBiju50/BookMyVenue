@@ -196,7 +196,7 @@ function Home() {
               >
                  <option value="" disabled selected>Select district</option>
                 <option value="Thiruvananthapuram">Thiruvananthapuram</option>
-                <option value="Ernakulam">Kollam</option>
+                <option value="Kollam">Kollam</option>
                 <option value="Pathanamthitta">Pathanamthitta</option>
                 <option value="Alappuzha">Alappuzha</option>
                 <option value="Kottayam">Kottayam</option>
