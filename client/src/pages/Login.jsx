@@ -92,6 +92,7 @@ function Login() {
               <input
                 type="email"
                 name="email"
+                autoComplete="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
@@ -108,6 +109,7 @@ function Login() {
               <input
                 type="password"
                 name="password"
+                autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
                 required
