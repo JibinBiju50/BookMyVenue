@@ -152,13 +152,6 @@ export default function CheckStatus() {
             {loading ? "Checking Status..." : "Check Status"}
           </button>
         </form>
-
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-          <p className="text-sm text-yellow-800">
-            You can find your tracking code from the confirmation shown after
-            submitting a booking inquiry.
-          </p>
-        </div>
       </div>
 
       {showModal && booking && (

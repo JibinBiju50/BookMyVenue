@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import { usePageTitle } from "../hooks/usePageTitle";
 function Register() {
   usePageTitle("Register");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { register, getDashboardPathByRole } = useAuth();
+  const initialRole = searchParams.get("role") === "owner" ? "owner" : "user";
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "user",
+    role: initialRole,
   });
 
   const [loading, setLoading] = useState(false);

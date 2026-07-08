@@ -2,14 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getTownSuggestions } from "../services/venueService";
 import { usePageTitle } from "../hooks/usePageTitle";
+import { useAuth } from "../context/AuthContext";
 function Home() {
   usePageTitle("Home");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [district, setDistrict] = useState("");
   const [town, setTown] = useState("");
   const [category, setCategory] = useState("");
   const [eventDate, setEventDate] = useState("");
+  const [listVenueMessage, setListVenueMessage] = useState("");
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState("");
   const [townSuggestions, setTownSuggestions] = useState([]);
@@ -112,6 +115,25 @@ function Home() {
     );
   };
 
+  const handleListVenue = () => {
+    if (!user) {
+      navigate("/register?role=owner");
+      return;
+    }
+
+    if (user.role === "owner") {
+      navigate("/owner/venues/new");
+      return;
+    }
+
+    if (user.role === "admin") {
+      navigate("/admin/dashboard");
+      return;
+    }
+
+    setListVenueMessage("Please use an owner account to list venues.");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#faf7f5] to-white">
 
@@ -143,14 +165,37 @@ function Home() {
               🔍 Browse Venues
             </Link>
 
-            <Link
-              to="owner/login"
+            <button
+              type="button"
+              onClick={handleListVenue}
               className="px-10 py-4 rounded-2xl text-lg font-medium bg-white border-2 border-[#8b1e2d] text-[#8b1e2d] hover:bg-[#8b1e2d] hover:text-white shadow-lg hover:scale-105 transition-all duration-300"
             >
               🏢 List Your Venue
-            </Link>
+            </button>
           </div>
         </div>
+
+        {listVenueMessage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+            <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-2xl">
+              <h2 className="text-2xl font-semibold text-[#4a1625]">
+                Owner Account Required
+              </h2>
+
+              <p className="mt-3 text-gray-600">
+                {listVenueMessage}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setListVenueMessage("")}
+                className="mt-6 px-6 py-3 rounded-xl bg-[#8b1e2d] text-white font-semibold hover:bg-[#6f1824] transition"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
 
 
         {/* Search Card */}

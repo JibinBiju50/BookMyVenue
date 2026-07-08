@@ -27,6 +27,8 @@ function VenuePage() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState("");
   const [townSuggestions, setTownSuggestions] = useState([]);
   const [showTownSuggestions, setShowTownSuggestions] = useState(false);
 
@@ -146,12 +148,10 @@ function VenuePage() {
     }));
   };
 
-  const handleApplyFilters = (e) => {
-    e.preventDefault();
-
+  const buildFilterQueryParams = (includeNearbyCoordinates = false) => {
     const queryParams = new URLSearchParams();
 
-    if (isNearbySearch) {
+    if (includeNearbyCoordinates) {
       const lat = searchParams.get("lat");
       const lng = searchParams.get("lng");
 
@@ -166,6 +166,49 @@ function VenuePage() {
         queryParams.set(key, value);
       }
     });
+
+    return queryParams;
+  };
+
+  const handleUseCurrentLocation = () => {
+    setLocationError("");
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setLocationLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const queryParams = buildFilterQueryParams(false);
+
+        queryParams.set("lat", latitude);
+        queryParams.set("lng", longitude);
+
+        navigate(`/venues/nearby?${queryParams.toString()}`);
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationError("Unable to access your location. Use manual filters.");
+        setLocationLoading(false);
+      }
+    );
+  };
+
+  const handleRemoveCurrentLocation = () => {
+    const queryParams = buildFilterQueryParams(false);
+    const queryString = queryParams.toString();
+
+    navigate(queryString ? `/venues?${queryString}` : "/venues");
+  };
+
+  const handleApplyFilters = (e) => {
+    e.preventDefault();
+
+    const queryParams = buildFilterQueryParams(isNearbySearch);
 
     if (isNearbySearch) {
       setSearchParams(queryParams);
@@ -214,6 +257,47 @@ function VenuePage() {
             className="mt-6 space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-2">
+                  Current Location
+                </label>
+
+                <button
+                  type="button"
+                  onClick={handleUseCurrentLocation}
+                  disabled={locationLoading}
+                  className="w-full py-3 rounded-xl border border-[#8b1e2d] text-[#8b1e2d] font-semibold hover:bg-red-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {locationLoading
+                    ? "Getting Location..."
+                    : isNearbySearch
+                      ? "Refresh Current Location"
+                      : "Use Current Location"}
+                </button>
+
+                {isNearbySearch && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveCurrentLocation}
+                    className="w-full mt-3 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition"
+                  >
+                    Remove Current Location
+                  </button>
+                )}
+
+                {isNearbySearch && (
+                  <p className="text-xs text-gray-500 mt-2">
+                    Nearby results are sorted by distance.
+                  </p>
+                )}
+
+                {locationError && (
+                  <p className="text-xs text-red-600 mt-2">
+                    {locationError}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
                   District
                 </label>
 
@@ -223,7 +307,7 @@ function VenuePage() {
                   onChange={handleFilterChange}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#8b1e2d] focus:outline-none"
                 >
-                  <option value="" disabled selected>Select district</option>
+                  <option value="">Select district</option>
                   <option value="Thiruvananthapuram">Thiruvananthapuram</option>
                   <option value="Kollam">Kollam</option>
                   <option value="Pathanamthitta">Pathanamthitta</option>
