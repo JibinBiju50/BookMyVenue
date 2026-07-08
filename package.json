@@ -4,9 +4,9 @@
   "description": "Backend for BookMyVenue - Kerala venue discovery app",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "seed": "node seeders/venueSeeder.js"
+    "start": "npm start --prefix server",
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "dev": "npm run dev --prefix server"
   },
   "dependencies": {
     "cors": "^2.8.5",
