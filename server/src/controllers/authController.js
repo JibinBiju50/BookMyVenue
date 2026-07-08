@@ -1,22 +1,29 @@
-import User from "../models/User.js";
 import { loginUser, refreshAccessToken, registerUser } from "../services/authService.js";
-import { generateAccessToken, generateRefreshToken } from "../services/tokenService.js";
+
+const isProduction = process.env.NODE_ENV === "production";
+const cookieSameSite = process.env.COOKIE_SAME_SITE || (isProduction ? "none" : "lax");
+const cookieSecure = process.env.COOKIE_SECURE
+  ? process.env.COOKIE_SECURE === "true"
+  : isProduction;
+
+const baseCookieOptions = {
+  httpOnly: true,
+  secure: cookieSecure,
+  sameSite: cookieSameSite,
+  path: "/",
+};
 
 const accessTokenCookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: "none",
-  path: "/",
+  ...baseCookieOptions,
   maxAge: 15 * 60 * 1000 
 };
 
 const refreshTokenCookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: "none",
-  path: "/",
+  ...baseCookieOptions,
   maxAge: 7 * 24 * 60 * 60 * 1000 
 };
+
+const clearCookieOptions = baseCookieOptions;
 
 export const register = async (req, res) => {
   try{
@@ -94,17 +101,8 @@ export const refresh = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
-  res.clearCookie("accessToken", {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-});
-
-res.clearCookie("refreshToken", {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-});
+  res.clearCookie("accessToken", clearCookieOptions);
+  res.clearCookie("refreshToken", clearCookieOptions);
 
   res.status(200).json({
     success: true,
