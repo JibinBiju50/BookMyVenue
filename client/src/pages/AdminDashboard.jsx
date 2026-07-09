@@ -502,35 +502,31 @@ function AdminDashboard() {
                   </p>
                 </div>
 
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    disabled={
-                      actionLoadingId === selectedVenue._id ||
-                      selectedVenue.status === "approved"
-                    }
-                    onClick={() =>
-                      updateStatus(selectedVenue._id, "approved")
-                    }
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Approve
-                  </button>
+                {selectedVenue?.status === "pending" ? (
+                  <div className="mt-6 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => updateStatus(selectedVenue._id, "approved")}
+                      className="flex-1 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition"
+                    >
+                      Approve Venue
+                    </button>
 
-                  <button
-                    type="button"
-                    disabled={
-                      actionLoadingId === selectedVenue._id ||
-                      selectedVenue.status === "rejected"
-                    }
-                    onClick={() =>
-                      updateStatus(selectedVenue._id, "rejected")
-                    }
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    Reject
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => updateStatus(selectedVenue._id, "rejected")}
+                      className="flex-1 bg-red-600 text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition"
+                    >
+                      Reject Venue
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-6 bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700">
+                    This venue has already been{" "}
+                    <span className="font-semibold">{selectedVenue.status}</span>. No further
+                    admin action is available unless the owner edits and resubmits it.
+                  </div>
+                )}
               </div>
             </div>
           </div>
