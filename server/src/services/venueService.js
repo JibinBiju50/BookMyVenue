@@ -218,7 +218,7 @@ export const getVenueByIdService = async (venueId) => {
 export const getNearbyVenuesService = async (query = {}) => {
   const { lat, lng, maxDistance = 45000 } = query;
 
-  if (!lat || !lng) {
+  if (lat === undefined || lng === undefined) {
     const error = new Error("lat and lng are required");
     error.statusCode = 400;
     throw error;
@@ -238,6 +238,17 @@ export const getNearbyVenuesService = async (query = {}) => {
     throw error;
   }
 
+  if (
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ) {
+    const error = new Error("Invalid latitude or longitude values");
+    error.statusCode = 400;
+    throw error;
+  }
+
   const filter = await buildVenueFilter(query);
 
   const venues = await Venue.aggregate([
@@ -245,7 +256,6 @@ export const getNearbyVenuesService = async (query = {}) => {
       $geoNear: {
         near: {
           type: "Point",
-          // MongoDB expects [longitude, latitude], not [latitude, longitude]
           coordinates: [longitude, latitude],
         },
         distanceField: "distanceMeters",
@@ -256,7 +266,6 @@ export const getNearbyVenuesService = async (query = {}) => {
     },
     {
       $addFields: {
-        // Convert meters to km and round to 1 decimal place
         distanceKm: {
           $round: [{ $divide: ["$distanceMeters", 1000] }, 1],
         },
@@ -269,7 +278,7 @@ export const getNearbyVenuesService = async (query = {}) => {
     },
   ]);
 
-   return addAvailabilityToVenues(venues, query.eventDate);
+  return addAvailabilityToVenues(venues, query.eventDate);
 };
 
 export const getTownSuggestionsService = async (query = {}) => {
